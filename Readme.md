@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Олег Волохов](https://up.htmlacademy.ru/javascript/14/user/36491).
-* Наставник: `Неизвестно`.
+* Наставник: [Олег Петров](https://up.htmlacademy.ru/javascript/14/user/42390).
 
 ---
 
