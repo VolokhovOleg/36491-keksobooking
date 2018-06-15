@@ -24,11 +24,14 @@ var template = document.querySelector('#ad-template').content.querySelector('.ma
 var mapPinsBlock = document.querySelector('.map__pins');
 var mapPin = document.querySelector('#ad-template').content.querySelector('.map__pin');
 
-var typeTransformate = function (word) {
-  var rus = {
-    
-  }
-}
+var typeTranslate = function (word) {
+  var russianWords = ['Квартира', 'Бунгало', 'Дом', 'Дворец'];
+  var englishWords = ['flat', 'bungalo', 'house', 'palace'];
+
+  var conformity = englishWords.indexOf(word);
+
+  return russianWords[conformity];
+};
 var generateRandomInteger = function (min, max, leadNull) {
   var random = min - 0.5 + Math.random() * (max - min + 1);
   return leadNull ? '0' + Math.round(random) : Math.round(random);
@@ -39,6 +42,11 @@ var generateRandomIndex = function (arr) {
 var shuffleArr = function () {
   return Math.random() - 0.5;
 };
+var getEndingOfNumerals = function (number, titles) {
+  var cases = [2, 0, 1, 1, 1, 2];
+  return titles [(number % 100 > 4 && number % 100 < 20) ? 2 : cases[(number % 10 < 5) ? number % 10 : 5]];
+};
+
 var generateAvatar = function () {
   while (avatarNumbers) {
     var randomAvatar = generateRandomInteger(1, 8, true);
@@ -49,6 +57,7 @@ var generateAvatar = function () {
   }
   return randomAvatar;
 };
+
 var createAds = function () {
   var locationX = generateRandomInteger(300, 900);
   var locationY = generateRandomInteger(130, 630);
@@ -80,6 +89,7 @@ var createAds = function () {
     };
   return ad;
 };
+
 var renderPin = function (x, y, avatar, title) {
   var pinElement = mapPin.cloneNode(true);
   var fragment = document.createDocumentFragment();
@@ -94,18 +104,23 @@ var renderPin = function (x, y, avatar, title) {
 };
 var renderAd = function (renderedAd) {
   var adElement = template.cloneNode(true);
+  var rooms = renderedAd.offer.rooms;
+  var guests = renderedAd.offer.guests;
 
   adElement.querySelector('.popup__avatar').setAttribute('src', renderedAd.author.avatar);
   adElement.querySelector('.popup__title').textContent = renderedAd.offer.title;
   adElement.querySelector('.popup__text--address').textContent = renderedAd.offer.address;
   adElement.querySelector('.popup__text--price').textContent = renderedAd.offer.price + '₽/ночь';
-  adElement.querySelector('.popup__type').textContent = typeTransformate(renderedAd.offer.type);
-  adElement.querySelector('.popup__text--capacity').textContent = renderedAd.offer.rooms + ' комнаты для ' + renderedAd.offer.guests + ' гостей';
+  adElement.querySelector('.popup__type').textContent = typeTranslate(renderedAd.offer.type);
+  adElement.querySelector('.popup__text--capacity').textContent = rooms + ' ' + getEndingOfNumerals(rooms, ['комната', 'комнаты', 'комнат']) + ' для ' + guests + ' ' + getEndingOfNumerals(guests, ['гостя', 'гостей', 'гостей']);
   adElement.querySelector('.popup__text--time').textContent = 'Заезд после' + renderedAd.offer.checkin + ', выезд до  ' + renderedAd.offer.checkout;
+  adElement.querySelector('.popup__photo').setAttribute('src', OFFER_PHOTOS[0]);
 
   return adElement;
 };
+
 var generateAd = function (amount) {
+  var filtersContainer = document.querySelector('.map__filters-container');
   var fragment = document.createDocumentFragment();
   var adsArray = [];
 
@@ -113,11 +128,12 @@ var generateAd = function (amount) {
     adsArray[i] = createAds();
     if (i === 0) {
       fragment.appendChild(renderAd(adsArray[i]));
+
     }
     renderPin(adsArray[i].location.x, adsArray[i].location.y, adsArray[i].author.avatar, adsArray[i].offer.title);
   }
 
-  map.appendChild(fragment);
+  map.insertBefore(fragment, filtersContainer);
 };
 
 generateAd(AMOUNT_OF_ADS);
