@@ -114,7 +114,6 @@ var renderAd = function (renderedAd) {
   adElement.querySelector('.popup__type').textContent = typeTranslate(renderedAd.offer.type);
   adElement.querySelector('.popup__text--capacity').textContent = rooms + ' ' + getEndingOfNumerals(rooms, ['комната', 'комнаты', 'комнат']) + ' для ' + guests + ' ' + getEndingOfNumerals(guests, ['гостя', 'гостей', 'гостей']);
   adElement.querySelector('.popup__text--time').textContent = 'Заезд после' + renderedAd.offer.checkin + ', выезд до  ' + renderedAd.offer.checkout;
-  adElement.querySelector('.popup__photo').setAttribute('src', OFFER_PHOTOS[0]);
 
   return adElement;
 };
