@@ -173,10 +173,11 @@ var renderAd = function (card) {
   adElement.querySelector('.popup__type').textContent = translateTypes(card.offer.type);
   adElement.querySelector('.popup__text--capacity').textContent = rooms + ' ' + getPlurals(rooms, ['комната', 'комнаты', 'комнат']) + ' для ' + guests + ' ' + getPlurals(guests, ['гостя', 'гостей', 'гостей']);
   adElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + card.offer.checkin + ', выезд до ' + card.offer.checkout;
-  adElement.querySelector('.popup__description').textContent = card.offer.description;
 
   clearDefaultElements(adElement.querySelector('.popup__features'), adElement.querySelectorAll('.popup__feature'));
   getGeneratedFeatures(adElement, card.offer.features);
+
+  adElement.querySelector('.popup__description').textContent = card.offer.description;
 
   clearDefaultElements(adElement.querySelector('.popup__photos'), adElement.querySelectorAll('.popup__photo'));
   getGeneratedPhotoes(adElement, card.offer.photos);
