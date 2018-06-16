@@ -81,8 +81,7 @@ var shuffleArr = function (array) {
 };
 
 var getRandomLengthOfArray = function (array) {
-  return array.splice(0, getRandomInteger(1, array.length - 1));
-
+  return array.splice(0, getRandomInteger(1, array.length));
 };
 
 var getPlurals = function (number, titles) {
@@ -116,7 +115,7 @@ var createAd = function (i) {
         'checkout': getRandomIndex(OFFERS.CHECK_TIME),
         'features': getRandomLengthOfArray(OFFERS.FEATURES),
         'description': '',
-        'photos': shuffleArr(OFFERS.PHOTOS)
+        'photos': shuffleArr(OFFERS.PHOTOS.slice())
       },
 
       'location': {
@@ -124,20 +123,42 @@ var createAd = function (i) {
         'y': locationY
       }
     };
-
   return ad;
 };
 
-var renderPin = function (adsArray) {
+var renderPin = function (array, i) {
 
   var pinElement = mapPin.cloneNode(true);
   var pinImg = pinElement.querySelector('img');
 
-  pinElement.style = 'left:' + (adsArray.location.x - PIN_SIZE.WIDTH) + 'px; ' + 'top:' + (adsArray.location.y - PIN_SIZE.HEIGHT / 2) + 'px;';
-  pinImg.src = adsArray.author.avatar;
-  pinImg.alt = adsArray.offer.title;
+  pinElement.style = 'left:' + (array[i].location.x - PIN_SIZE.WIDTH) + 'px; ' + 'top:' + (array[i].location.y - PIN_SIZE.HEIGHT / 2) + 'px;';
+  pinImg.src = array[i].author.avatar;
+  pinImg.alt = array[i].offer.title;
 
   mapPinsBlock.appendChild(pinElement);
+};
+
+var clearDefaultElements = function (wrapOfElement, avaliableElements) {
+  for (var i = 0; i < avaliableElements.length; i++) {
+    wrapOfElement.removeChild(avaliableElements[i]);
+  }
+};
+
+var getGeneratedFeatures = function (adElement, card) {
+  for (var i = 0; i < card.length; i++) {
+    var featureElement = template.querySelector('.popup__feature--' + card[i]);
+    var element = featureElement.cloneNode();
+    adElement.querySelector('.popup__features').appendChild(element);
+  }
+};
+
+var getGeneratedPhotoes = function (adElement, photoesArray) {
+  for (var i = 0; i < photoesArray.length; i++) {
+    var photoElement = template.querySelector('.popup__photo');
+    var element = photoElement.cloneNode();
+    element.src = photoesArray[i];
+    adElement.querySelector('.popup__photos').appendChild(element);
+  }
 };
 
 var renderAd = function (card) {
@@ -151,25 +172,39 @@ var renderAd = function (card) {
   adElement.querySelector('.popup__text--price').textContent = card.offer.price + '₽/ночь';
   adElement.querySelector('.popup__type').textContent = translateTypes(card.offer.type);
   adElement.querySelector('.popup__text--capacity').textContent = rooms + ' ' + getPlurals(rooms, ['комната', 'комнаты', 'комнат']) + ' для ' + guests + ' ' + getPlurals(guests, ['гостя', 'гостей', 'гостей']);
-  adElement.querySelector('.popup__text--time').textContent = 'Заезд после' + card.offer.checkin + ', выезд до  ' + card.offer.checkout;
+  adElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + card.offer.checkin + ', выезд до ' + card.offer.checkout;
   adElement.querySelector('.popup__description').textContent = card.offer.description;
+
+  clearDefaultElements(adElement.querySelector('.popup__features'), adElement.querySelectorAll('.popup__feature'));
+  getGeneratedFeatures(adElement, card.offer.features);
+
+  clearDefaultElements(adElement.querySelector('.popup__photos'), adElement.querySelectorAll('.popup__photo'));
+  getGeneratedPhotoes(adElement, card.offer.photos);
 
   return adElement;
 };
 
-var generateAd = function (amount) {
-  var filtersContainer = document.querySelector('.map__filters-container');
-  var fragment = document.createDocumentFragment();
+var getAdsArray = function (fragment, amount) {
   var adsArray = [];
 
   for (var i = 0; i < amount; i++) {
     adsArray[i] = createAd(i);
     fragment.appendChild(renderAd(adsArray[0]));
-
-    renderPin(adsArray[i]);
+    renderPin(adsArray, i);
   }
+};
 
-  map.insertBefore(fragment, filtersContainer);
+var renderAll = function (fragment) {
+  var container = document.querySelector('.map__filters-container');
+  map.insertBefore(fragment, container);
+};
+
+var generateAd = function (amount) {
+  var fragment = document.createDocumentFragment();
+
+  getAdsArray(fragment, amount);
+
+  renderAll(fragment);
 };
 
 generateAd(AMOUNT_OF_ADS);
