@@ -148,13 +148,6 @@ var createElement = function (tagName, classes) {
   return tagName;
 };
 
-var getPopupPhoto = function (photo) {
-  photo.alt = 'Фотография жилья';
-  photo.width = 45;
-  photo.height = 45;
-  return photo;
-}
-
 var renderAd = function (card) {
   var adElement = template.cloneNode(true);
   var rooms = card.offer.rooms;
@@ -175,7 +168,12 @@ var renderAd = function (card) {
   adElement.querySelector('.popup__description').textContent = card.offer.description;
 
   for (var photoIndex = 0; photoIndex < card.offer.photos.length; photoIndex++) {
-    var photo = getPopupPhoto(createElement('img', ['popup__photo']));
+    var photo = createElement('img', ['popup__photo']);
+
+    photo.width = 45;
+    photo.height = 45;
+    photo.alt = 'Фотография жилья';
+
     adElement.querySelector('.popup__photos').appendChild(photo).src = card.offer.photos[photoIndex];
   }
 
