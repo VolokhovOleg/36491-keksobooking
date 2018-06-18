@@ -4,7 +4,7 @@ var AMOUNT_OF_ADS = 8;
 var housePhoto = {
   WIDTH: 45,
   HEIGHT: 45
-}
+};
 var offers = {
   TITLES: [
     'Большая уютная квартира',
