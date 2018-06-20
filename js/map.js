@@ -49,6 +49,7 @@ var pinSize = {
   HEIGHT: 50
 };
 var adsArray = [];
+var pinsArray = [];
 var offerTypesTranslation = {
   'flat': 'Квартира',
   'bungalo': 'Бунгало',
@@ -63,12 +64,9 @@ var container = document.querySelector('.map__filters-container');
 var mainPin = document.querySelector('.map__pin--main');
 var mapPinsBlock = document.querySelector('.map__pins');
 var mapPin = mainTemplate.content.querySelector('.map__pin');
-var headerFieldsets = document.querySelector('.ad-form-header');
-var fieldsets = document.querySelectorAll('.ad-form__element');
-var pinDecoratin = document.querySelector('.map__pin--decoration-js');
 var mainForm = document.querySelector('.ad-form');
 var addressInput = mainForm.querySelector('#address');
-
+var fieldsets = mainForm.getElementsByTagName('fieldset');
 var mainPinProperties = {
   'position': {
     'X': mainPin.offsetTop,
@@ -76,7 +74,7 @@ var mainPinProperties = {
   },
   'WIDTH': 65,
   'HEIGHT': 65,
-  'ACTIVE_PIN_HEIGHT': 114
+  'TAIL': 22
 };
 
 var getRandomInteger = function (min, max) {
@@ -143,30 +141,34 @@ var createAd = function (i) {
   };
 };
 
-var getAd = function (i) {
-  removePreviusAdCard();
+var getAd = function (array) {
   var fragment = document.createDocumentFragment();
-  fragment.appendChild(renderAd(adsArray[i]));
+  fragment.appendChild(renderAd(array));
   map.insertBefore(fragment, container);
 };
 
-var renderPin = function (array, i) {
-  var pinElement = mapPin.cloneNode(true);
-  var pinImg = pinElement.querySelector('img');
+var renderPin = function (array) {
+  if (pinsArray.length < AMOUNT_OF_ADS) {
+    var pinElement = mapPin.cloneNode(true);
+    var pinImg = pinElement.querySelector('img');
 
-  var style = {
-    top: 'top:' + (array[i].location.y - pinSize.HEIGHT / 2) + 'px;',
-    left: 'left:' + (array[i].location.x - pinSize.WIDTH) + 'px;'
-  };
+    var style = {
+      top: 'top:' + (array.location.y - pinSize.HEIGHT / 2) + 'px;',
+      left: 'left:' + (array.location.x - pinSize.WIDTH) + 'px;'
+    };
 
-  pinElement.style = style.top + style.left;
-  pinImg.src = array[i].author.avatar;
-  pinImg.alt = array[i].offer.title;
+    pinElement.style = style.top + style.left;
+    pinImg.src = array.author.avatar;
+    pinImg.alt = array.offer.title;
 
-  pinElement.addEventListener('click', function () {
-    getAd(i);
-  });
-  mapPinsBlock.appendChild(pinElement);
+    pinElement.addEventListener('click', function () {
+      getAd(array);
+    });
+
+    pinsArray.push(pinElement);
+
+    mapPinsBlock.appendChild(pinElement);
+  }
 };
 
 var getFeature = function (arr) {
@@ -185,6 +187,10 @@ var getPhoto = function () {
 };
 
 var renderAd = function (card) {
+  if (map.querySelector('.map__card') !== null) {
+    removeAdCard();
+  }
+
   var adElement = cardTemplate.cloneNode(true);
   var rooms = card.offer.rooms;
   var guests = card.offer.guests;
@@ -208,7 +214,13 @@ var renderAd = function (card) {
     adElement.querySelector('.popup__photos').appendChild(getPhoto(card.offer.photos[photoIndex])).src = card.offer.photos[photoIndex];
   }
 
-  closeAd(closeAdBtn);
+  closeAdBtn.addEventListener('click', removeAdCard);
+
+  document.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === ESC_KEYCODE && map.querySelector('.map__card') !== null) {
+      removeAdCard();
+    }
+  });
 
   return adElement;
 };
@@ -216,71 +228,45 @@ var renderAd = function (card) {
 var getAdsArray = function (amount) {
   for (var i = 0; i < amount; i++) {
     adsArray[i] = createAd(i);
-    renderPin(adsArray, i);
+    renderPin(adsArray[i]);
   }
 };
 
-var removePreviusAdCard = function () {
-  var allMapCards = map.querySelectorAll('.map__card');
+var removeAdCard = function () {
+  var renderedCard = map.querySelector('.map__card');
+  renderedCard.remove();
+};
 
-  for (var i = 0; i < allMapCards.length; i++) {
-    map.removeChild(allMapCards[i]);
+var disabledForm = function () {
+  for (var i = 0; i < fieldsets.length; i++) {
+    fieldsets[i].disabled = true;
   }
 };
 
-var removePreviousPins = function () {
-  var allPins = mapPinsBlock.querySelectorAll('.map__pin');
-
-  for (var i = 1; i < allPins.length; i++) {
-    mapPinsBlock.removeChild(allPins[i]);
+var activateForm = function () {
+  for (var i = 0; i < fieldsets.length; i++) {
+    fieldsets[i].disabled = false;
   }
-};
-
-var getFormDisabled = function () {
-  for (var indexFieldset = 0; indexFieldset < fieldsets.length; indexFieldset++) {
-    fieldsets[indexFieldset].disabled = true;
-  }
-  headerFieldsets.disabled = true;
-};
-
-var getFormAvailable = function () {
-  for (var indexFieldset = 0; indexFieldset < fieldsets.length; indexFieldset++) {
-    fieldsets[indexFieldset].disabled = false;
-  }
-  headerFieldsets.disabled = false;
-  pinDecoratin.style = 'display: none;';
   mainForm.classList.remove('ad-form--disabled');
 };
 
 var activatePage = function () {
-  removePreviousPins();
-  removePreviusAdCard();
+  map.classList.remove('map--faded');
   getAdsArray(AMOUNT_OF_ADS);
-  getFormAvailable();
-  mainPin.style = 'left: 570px; top: 375px; height: ' + mainPinProperties.ACTIVE_PIN_HEIGHT + 'px;';
-  getMainPinProperties(mainPinProperties.ACTIVE_PIN_HEIGHT);
+  activateForm();
+  getMainPinProperties(mainPinProperties.TAIL);
 };
 
-var closeAd = function (closeAdBtn) {
-  closeAdBtn.addEventListener('click', removePreviusAdCard);
-  document.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === ESC_KEYCODE) {
-      evt.preventDefault();
-      removePreviusAdCard();
-    }
-  });
-};
-
-var getMainPinProperties = function (pinHeight) {
+var getMainPinProperties = function (tail) {
 
   var mainPinPositionX = Math.round(mainPinProperties.position.X + mainPinProperties.WIDTH / 2);
-  var mainPinPositionY = Math.round(mainPinProperties.position.Y + pinHeight / 2);
+  var mainPinPositionY = Math.round(mainPinProperties.position.Y + (mainPinProperties.HEIGHT / 2 + tail));
 
   addressInput.value = mainPinPositionY + ', ' + mainPinPositionX;
 };
 
 mainPin.addEventListener('mouseup', activatePage);
 
-getMainPinProperties(mainPinProperties.HEIGHT);
+getMainPinProperties(0);
 
-getFormDisabled();
+disabledForm();
