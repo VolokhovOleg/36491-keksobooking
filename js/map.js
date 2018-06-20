@@ -48,15 +48,6 @@ var pinSize = {
   WIDTH: 70,
   HEIGHT: 50
 };
-var mainPinProperties = {
-  'position': {
-    'X': mainPin.offsetTop,
-    'Y': mainPin.offsetLeft
-  },
-  'WIDTH': 65,
-  'HEIGHT': 65,
-  'ACTIVE_PIN_HEIGHT': 114
-};
 var adsArray = [];
 var offerTypesTranslation = {
   'flat': 'Квартира',
@@ -77,6 +68,16 @@ var fieldsets = document.querySelectorAll('.ad-form__element');
 var pinDecoratin = document.querySelector('.map__pin--decoration-js');
 var mainForm = document.querySelector('.ad-form');
 var addressInput = mainForm.querySelector('#address');
+
+var mainPinProperties = {
+  'position': {
+    'X': mainPin.offsetTop,
+    'Y': mainPin.offsetLeft
+  },
+  'WIDTH': 65,
+  'HEIGHT': 65,
+  'ACTIVE_PIN_HEIGHT': 114
+};
 
 var getRandomInteger = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
