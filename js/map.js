@@ -1,5 +1,6 @@
 'use strict';
 
+var ESC_KEYCODE = 27;
 var AMOUNT_OF_ADS = 8;
 var housePhoto = {
   WIDTH: 45,
@@ -47,7 +48,16 @@ var pinSize = {
   WIDTH: 70,
   HEIGHT: 50
 };
-
+var mainPinProperties = {
+  'position': {
+    'X': mainPin.offsetTop,
+    'Y': mainPin.offsetLeft
+  },
+  'WIDTH': 65,
+  'HEIGHT': 65,
+  'ACTIVE_PIN_HEIGHT': 114
+};
+var adsArray = [];
 var offerTypesTranslation = {
   'flat': 'Квартира',
   'bungalo': 'Бунгало',
@@ -56,14 +66,17 @@ var offerTypesTranslation = {
 };
 
 var mainTemplate = document.querySelector('#ad-template');
-
 var map = document.querySelector('.map');
 var cardTemplate = mainTemplate.content.querySelector('.map__card');
-
+var container = document.querySelector('.map__filters-container');
+var mainPin = document.querySelector('.map__pin--main');
 var mapPinsBlock = document.querySelector('.map__pins');
 var mapPin = mainTemplate.content.querySelector('.map__pin');
-
-var container = document.querySelector('.map__filters-container');
+var headerFieldsets = document.querySelector('.ad-form-header');
+var fieldsets = document.querySelectorAll('.ad-form__element');
+var pinDecoratin = document.querySelector('.map__pin--decoration-js');
+var mainForm = document.querySelector('.ad-form');
+var addressInput = mainForm.querySelector('#address');
 
 var getRandomInteger = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -129,20 +142,29 @@ var createAd = function (i) {
   };
 };
 
-var renderPin = function (array) {
+var getAd = function (i) {
+  removePreviusAdCard();
+  var fragment = document.createDocumentFragment();
+  fragment.appendChild(renderAd(adsArray[i]));
+  map.insertBefore(fragment, container);
+};
 
+var renderPin = function (array, i) {
   var pinElement = mapPin.cloneNode(true);
   var pinImg = pinElement.querySelector('img');
 
   var style = {
-    top: 'top:' + (array.location.y - pinSize.HEIGHT / 2) + 'px;',
-    left: 'left:' + (array.location.x - pinSize.WIDTH) + 'px;'
+    top: 'top:' + (array[i].location.y - pinSize.HEIGHT / 2) + 'px;',
+    left: 'left:' + (array[i].location.x - pinSize.WIDTH) + 'px;'
   };
 
   pinElement.style = style.top + style.left;
-  pinImg.src = array.author.avatar;
-  pinImg.alt = array.offer.title;
+  pinImg.src = array[i].author.avatar;
+  pinImg.alt = array[i].offer.title;
 
+  pinElement.addEventListener('click', function () {
+    getAd(i);
+  });
   mapPinsBlock.appendChild(pinElement);
 };
 
@@ -165,6 +187,7 @@ var renderAd = function (card) {
   var adElement = cardTemplate.cloneNode(true);
   var rooms = card.offer.rooms;
   var guests = card.offer.guests;
+  var closeAdBtn = adElement.querySelector('.popup__close');
 
   adElement.querySelector('.popup__avatar').src = card.author.avatar;
   adElement.querySelector('.popup__title').textContent = card.offer.title;
@@ -184,28 +207,79 @@ var renderAd = function (card) {
     adElement.querySelector('.popup__photos').appendChild(getPhoto(card.offer.photos[photoIndex])).src = card.offer.photos[photoIndex];
   }
 
+  closeAd(closeAdBtn);
+
   return adElement;
 };
 
 var getAdsArray = function (amount) {
-  var fragment = document.createDocumentFragment();
-  var adsArray = [];
-
   for (var i = 0; i < amount; i++) {
     adsArray[i] = createAd(i);
-    fragment.appendChild(renderAd(adsArray[0]));
-    renderPin(adsArray[i]);
+    renderPin(adsArray, i);
   }
-
-  return fragment;
 };
 
-var generateAd = function (amount) {
-  var fragment = getAdsArray(amount);
+var removePreviusAdCard = function () {
+  var allMapCards = map.querySelectorAll('.map__card');
 
-  map.insertBefore(fragment, container);
+  for (var i = 0; i < allMapCards.length; i++) {
+    map.removeChild(allMapCards[i]);
+  }
 };
 
-generateAd(AMOUNT_OF_ADS);
+var removePreviousPins = function () {
+  var allPins = mapPinsBlock.querySelectorAll('.map__pin');
 
-map.classList.remove('map--faded');
+  for (var i = 1; i < allPins.length; i++) {
+    mapPinsBlock.removeChild(allPins[i]);
+  }
+};
+
+var getFormDisabled = function () {
+  for (var indexFieldset = 0; indexFieldset < fieldsets.length; indexFieldset++) {
+    fieldsets[indexFieldset].disabled = true;
+  }
+  headerFieldsets.disabled = true;
+};
+
+var getFormAvailable = function () {
+  for (var indexFieldset = 0; indexFieldset < fieldsets.length; indexFieldset++) {
+    fieldsets[indexFieldset].disabled = false;
+  }
+  headerFieldsets.disabled = false;
+  pinDecoratin.style = 'display: none;';
+  mainForm.classList.remove('ad-form--disabled');
+};
+
+var activatePage = function () {
+  removePreviousPins();
+  removePreviusAdCard();
+  getAdsArray(AMOUNT_OF_ADS);
+  getFormAvailable();
+  mainPin.style = 'left: 570px; top: 375px; height: ' + mainPinProperties.ACTIVE_PIN_HEIGHT + 'px;';
+  getMainPinProperties(mainPinProperties.ACTIVE_PIN_HEIGHT);
+};
+
+var closeAd = function (closeAdBtn) {
+  closeAdBtn.addEventListener('click', removePreviusAdCard);
+  document.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      evt.preventDefault();
+      removePreviusAdCard();
+    }
+  });
+};
+
+var getMainPinProperties = function (pinHeight) {
+
+  var mainPinPositionX = Math.round(mainPinProperties.position.X + mainPinProperties.WIDTH / 2);
+  var mainPinPositionY = Math.round(mainPinProperties.position.Y + pinHeight / 2);
+
+  addressInput.value = mainPinPositionY + ', ' + mainPinPositionX;
+};
+
+mainPin.addEventListener('mouseup', activatePage);
+
+getMainPinProperties(mainPinProperties.HEIGHT);
+
+getFormDisabled();
