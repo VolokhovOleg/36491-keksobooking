@@ -67,6 +67,7 @@ var mapPin = mainTemplate.content.querySelector('.map__pin');
 var mainForm = document.querySelector('.ad-form');
 var addressInput = mainForm.querySelector('#address');
 var fieldsets = mainForm.getElementsByTagName('fieldset');
+var activeCard = map.querySelector('.map__card');
 var mainPinProperties = {
   'position': {
     'X': mainPin.offsetTop,
@@ -187,11 +188,12 @@ var getPhoto = function () {
 };
 
 var renderAd = function (card) {
-  if (map.querySelector('.map__card') !== null) {
+  if (activeCard !== null) {
     removeAdCard();
   }
 
   var adElement = cardTemplate.cloneNode(true);
+  activeCard = adElement;
   var rooms = card.offer.rooms;
   var guests = card.offer.guests;
   var closeAdBtn = adElement.querySelector('.popup__close');
@@ -216,11 +218,7 @@ var renderAd = function (card) {
 
   closeAdBtn.addEventListener('click', removeAdCard);
 
-  document.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === ESC_KEYCODE && map.querySelector('.map__card') !== null) {
-      removeAdCard();
-    }
-  });
+  document.addEventListener('keydown', removeAdCardWithEsc);
 
   return adElement;
 };
@@ -233,8 +231,15 @@ var getAdsArray = function (amount) {
 };
 
 var removeAdCard = function () {
-  var renderedCard = map.querySelector('.map__card');
-  renderedCard.remove();
+  activeCard.remove();
+  document.removeEventListener('keydown', removeAdCardWithEsc);
+};
+
+var removeAdCardWithEsc = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE && activeCard !== null) {
+    removeAdCard();
+    document.removeEventListener('keydown', removeAdCardWithEsc);
+  }
 };
 
 var disabledForm = function () {
