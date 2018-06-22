@@ -56,7 +56,6 @@ var offerTypesTranslation = {
   'house': 'Дом',
   'palace': 'Дворец'
 };
-
 var mainTemplate = document.querySelector('#ad-template');
 var map = document.querySelector('.map');
 var cardTemplate = mainTemplate.content.querySelector('.map__card');
@@ -76,6 +75,31 @@ var mainPinProperties = {
   'WIDTH': 65,
   'HEIGHT': 65,
   'TAIL': 22
+};
+var resetBtn = mainForm.querySelector('.ad-form__reset');
+
+var priceInput = mainForm.querySelector('#price');
+var priceTypes = {
+  'MAX': 1000000
+};
+// var offerTypesPrice = {
+//   'flat': 1000,
+//   'bungalo': 0,
+//   'house': 5000,
+//   'palace': 10000
+// };
+
+var titleInput = mainForm.querySelector('#title');
+var titleInputProperties = {
+  'MIN_LENGHT': 30,
+  'MAX_LENGHT': 100,
+};
+
+var hintProperties = {
+  'style': {
+    'VALID': 'color: green;',
+    'INVALID': 'color: red;'
+  }
 };
 
 var getRandomInteger = function (min, max) {
@@ -104,6 +128,10 @@ var getRandomLengthOfArray = function (array) {
 var getPlurals = function (number, titles) {
   var cases = [2, 0, 1, 1, 1, 2];
   return titles [(number % 100 > 4 && number % 100 < 20) ? 2 : cases[(number % 10 < 5) ? number % 10 : 5]];
+};
+
+function getSpaces(number) {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 };
 
 var getAvatarPath = function (path) {
@@ -270,8 +298,93 @@ var getMainPinProperties = function (tail) {
   addressInput.value = mainPinPositionY + ', ' + mainPinPositionX;
 };
 
+var resetPage = function () {
+  map.classList.add('map--faded');
+
+  for (var i = 0; i < pinsArray.length; i++) {
+    pinsArray[i].remove();
+  }
+
+  if (activeCard !== null) {
+    removeAdCard();
+  }
+
+  disabledForm();
+  getMainPinProperties(0);
+  window.pinsArray = [];
+};
+
 mainPin.addEventListener('mouseup', activatePage);
 
 getMainPinProperties(0);
+
+resetBtn.addEventListener('click', resetPage);
+
+var validateTitle = function () {
+  var hint = document.createElement('span');
+
+  titleInput.parentNode.appendChild(hint);
+
+  var minValue = titleInputProperties.MIN_LENGHT;
+  var maxValue = titleInputProperties.MAX_LENGHT;
+  var greenColor = hintProperties.style.VALID;
+  var redColor = hintProperties.style.INVALID;
+
+  if (titleInput.value.length === 0) {
+    hint.textContent = 'Можно ввести от ' + minValue + ' до ' + maxValue + getPlurals(maxValue, [' символ.', ' символа.', ' символов.']);
+  }
+
+  titleInput.oninput = function () {
+    if (titleInput.value.length < minValue) {
+      hint.textContent = 'Надо ввести хотя бы ' + (minValue - titleInput.value.length) + getPlurals((titleInputProperties.MIN_LENGHT - titleInput.value.length), [' символ.', ' символа.', ' символов.']);
+      hint.style = redColor;
+    }
+
+    if (titleInput.value.length >= minValue) {
+      hint.textContent = 'Можно ещё ввести ' + (maxValue - titleInput.value.length) + getPlurals((maxValue - titleInput.value.length), [' символ.', ' символа.', ' символов.']);
+      hint.style = greenColor;
+    }
+
+    if (titleInput.value.length === maxValue) {
+      hint.textContent = 'Готово!';
+      hint.style = greenColor;
+    }
+  };
+};
+
+var validatePrice = function () {
+  var maxValue = priceTypes.MAX;
+  var rubleSymbol = '&#x20bd;';
+  var hint = document.createElement('span');
+  var redColor = hintProperties.style.INVALID;
+  var greenColor = hintProperties.style.VALID;
+
+  priceInput.parentNode.appendChild(hint);
+  hint.textContent = 'Максимум ' + getSpaces(maxValue) + ' ';
+  hint.insertAdjacentHTML('beforeend', rubleSymbol);
+
+  priceInput.oninput = function () {
+    addEventListener('invalid', function () {
+      hint.textContent = 'Максимум ' + getSpaces(maxValue) + ' ';
+      hint.insertAdjacentHTML('beforeend', rubleSymbol);
+      hint.style = redColor;
+    });
+
+    if (priceInput.value > maxValue) {
+      hint.textContent = 'Максимум ' + getSpaces(maxValue) + ' ';
+      hint.insertAdjacentHTML('beforeend', rubleSymbol);
+      hint.style = redColor;
+    }
+
+    if (priceInput.value >= 0 && priceInput.value < maxValue) {
+      hint.textContent = 'Готово!';
+      hint.style = greenColor;
+    }
+  };
+};
+
+validateTitle();
+
+validatePrice();
 
 disabledForm();
