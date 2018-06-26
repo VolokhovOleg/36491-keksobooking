@@ -81,6 +81,7 @@ var submitBtn = mainForm.querySelector('.ad-form__submit');
 var resetBtn = mainForm.querySelector('.ad-form__reset');
 var titleInput = mainForm.querySelector('#title');
 var priceInput = mainForm.querySelector('#price');
+var defaultPricePlaceholder = '1000';
 var houseType = mainForm.querySelector('#type');
 var offerTypesPrice = {
   'flat': 1000,
@@ -98,8 +99,11 @@ var matchRoomAndCapacity = {
 };
 var roomAmount = mainForm.querySelector('#room_number');
 var roomCapacity = mainForm.querySelector('#capacity');
-var invalidInputStyle = 'border-color: rgba(255, 0, 0, 1);';
-var validInputStyle = 'border: 1px solid rgba(217, 217, 217, 1);';
+var inputStyles = {
+  'INVALID': 'border-color: rgba(255, 0, 0, 1);',
+  'VALID': 'border: 1px solid rgba(217, 217, 217, 1);'
+};
+var inputs = mainForm.querySelectorAll('input');
 
 var getRandomInteger = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -253,6 +257,14 @@ var getAdsArray = function (amount) {
   }
 };
 
+var resetInputs = function () {
+  priceInput.placeholder = defaultPricePlaceholder;
+
+  for (var i = 0; i < inputs.length; i++) {
+    inputs[i].style = inputStyles.VALID;
+  }
+};
+
 var removeAdCard = function () {
   activeCard.remove();
   document.removeEventListener('keydown', removeAdCardWithEsc);
@@ -294,26 +306,18 @@ var getMainPinProperties = function (tail) {
   addressInput.value = mainPinPositionY + ', ' + mainPinPositionX;
 };
 
-var resetForm = function () {
-  mainForm.reset();
-  titleInput.style = validInputStyle;
-  priceInput.style = validInputStyle;
-  priceInput.placeholder = 1000;
-  roomCapacity.style = validInputStyle;
-  roomCapacity.options[2].selected = true;
-  roomAmount.options[0].selected = true;
-  houseType.options[1].selected = true;
-};
-
 var resetPage = function () {
   map.classList.add('map--faded');
   mainForm.classList.add('ad-form--disabled');
-  resetForm();
+
+  mainForm.reset();
+  resetInputs();
+
   for (var i = 0; i < pinsArray.length; i++) {
     pinsArray[i].remove();
   }
 
-  if (activeCard !== null) {
+  if (activeCard) {
     removeAdCard();
   }
 
@@ -324,42 +328,35 @@ var resetPage = function () {
 
 var checkValidation = function (input) {
   if (input.validity.tooShort) {
-    input.style = invalidInputStyle;
+    input.style = inputStyles.INVALID;
   } else if (input.validity.valueMissing) {
-    input.style = invalidInputStyle;
+    input.style = inputStyles.INVALID;
+  } else if (priceInput.validity.rangeOverflow) {
+    input.style = inputStyles.INVALID;
   } else if (priceInput.validity.rangeUnderflow) {
-    input.style = invalidInputStyle;
+    input.style = inputStyles.INVALID;
   } else {
     input.setCustomValidity('');
-    input.style = validInputStyle;
+    input.style = inputStyles.VALID;
   }
 };
 
-var validateMatchRoom = function () {
-  if (roomCapacity.options[roomCapacity.selectedIndex].hasAttribute('disabled')) {
-    roomCapacity.style = invalidInputStyle;
-    submitBtn.disabled = true;
-  }
+var getEquivalentTime = function (select, value) {
+  select.value = value;
+};
 
-  if (!roomCapacity.options[roomCapacity.selectedIndex].hasAttribute('disabled')) {
-    roomCapacity.style = validInputStyle;
-    submitBtn.disabled = false;
-  }
+var getEquivalentAmount = function (select, value) {
+  var notForGuestsValue = '0';
+
+  select.value = matchRoomAndCapacity[roomAmount.value].includes(notForGuestsValue) ? notForGuestsValue : value;
 };
 
 var setMatchRoom = function () {
-  for (var i = 0; i < roomAmount.options.length; i++) {
-    if (roomAmount.options[i].selected) {
-      for (var j = 0; j < roomCapacity.options.length; j++) {
-        if (matchRoomAndCapacity[roomAmount.options[i].value].includes(roomCapacity.options[j].value)) {
-          roomCapacity.options[j].disabled = false;
-        } else {
-          roomCapacity.options[j].disabled = true;
-        }
-      }
-    }
+  for (var i = 0; i < roomCapacity.options.length; i++) {
+    roomCapacity.options[i].disabled = (!matchRoomAndCapacity[roomAmount.value].includes(roomCapacity.options[i].value));
   }
-  validateMatchRoom();
+
+  getEquivalentAmount(roomCapacity, roomAmount.value);
 };
 
 titleInput.addEventListener('change', function () {
@@ -373,30 +370,25 @@ priceInput.addEventListener('change', function () {
 houseType.addEventListener('change', function () {
   priceInput.placeholder = offerTypesPrice[houseType.value];
   priceInput.min = offerTypesPrice[houseType.value];
-  if (priceInput.min < priceInput.value) {
-    priceInput.style = invalidInputStyle;
+  if (priceInput.min < priceInput.value || priceInput.max < priceInput.value) {
+    priceInput.style = inputStyles.INVALID;
   }
 });
 
 timeinSelect.addEventListener('change', function () {
-  for (var i = 0; i < timeoutSelect.options.length; i++) {
-    if (timeinSelect.value === timeoutSelect.options[i].value) {
-      timeoutSelect.selectedIndex = i;
-    }
-  }
+  getEquivalentTime(timeoutSelect, timeinSelect.value);
 });
 
 timeoutSelect.addEventListener('change', function () {
-  for (var i = 0; i < timeinSelect.options.length; i++) {
-    if (timeoutSelect.value === timeinSelect.options[i].value) {
-      timeinSelect.selectedIndex = i;
-    }
-  }
+  getEquivalentTime(timeinSelect, timeoutSelect.value);
 });
 
 roomAmount.addEventListener('change', setMatchRoom);
 
-roomCapacity.addEventListener('change', validateMatchRoom);
+submitBtn.addEventListener('mouseup', function () {
+  checkValidation(priceInput);
+  checkValidation(titleInput);
+});
 
 resetBtn.addEventListener('click', resetPage);
 
