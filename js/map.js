@@ -298,14 +298,6 @@ var activatePage = function () {
   setMatchRoom();
 };
 
-var getMainPinProperties = function (tail) {
-
-  var mainPinPositionX = Math.round(mainPinProperties.position.X + mainPinProperties.WIDTH / 2);
-  var mainPinPositionY = Math.round(mainPinProperties.position.Y + (mainPinProperties.HEIGHT / 2 + tail));
-
-  addressInput.value = mainPinPositionY + ', ' + mainPinPositionX;
-};
-
 var resetPage = function () {
   map.classList.add('map--faded');
   mainForm.classList.add('ad-form--disabled');
@@ -324,6 +316,14 @@ var resetPage = function () {
   disabledForm();
   getMainPinProperties(0);
   window.pinsArray = [];
+};
+
+var getMainPinProperties = function (tail) {
+
+  var mainPinPositionX = Math.round(mainPinProperties.position.X + mainPinProperties.WIDTH / 2);
+  var mainPinPositionY = Math.round(mainPinProperties.position.Y + (mainPinProperties.HEIGHT / 2 + tail));
+
+  addressInput.value = mainPinPositionY + ', ' + mainPinPositionX;
 };
 
 var checkValidation = function (input) {
