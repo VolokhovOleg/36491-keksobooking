@@ -343,10 +343,7 @@ var getEquivalentTime = function (select, value) {
 };
 
 var getEquivalentAmount = function (capacityRoom, amountRoomValue) {
-  var specialGuestValue = '0';
-  var specialRoomValue = '100';
-
-  capacityRoom.value = amountRoomValue !== specialRoomValue ? amountRoomValue : specialGuestValue;
+  capacityRoom.value = matchRoomAndCapacity[roomAmount.value].includes(amountRoomValue) ? amountRoomValue : matchRoomAndCapacity[amountRoomValue];
 };
 
 var setMatchRoom = function () {
