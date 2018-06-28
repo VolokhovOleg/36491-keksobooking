@@ -56,18 +56,18 @@ var offerTypesTranslation = {
   'house': 'Дом',
   'palace': 'Дворец'
 };
+var offerTypesPrice = {
+  'flat': 1000,
+  'bungalo': 0,
+  'house': 5000,
+  'palace': 10000
+};
 var mainTemplate = document.querySelector('#ad-template');
 var map = document.querySelector('.map');
 var cardTemplate = mainTemplate.content.querySelector('.map__card');
+var activeCard = map.querySelector('.map__card');
 var container = document.querySelector('.map__filters-container');
 var mainPin = document.querySelector('.map__pin--main');
-var mapPinsBlock = document.querySelector('.map__pins');
-var mapPin = mainTemplate.content.querySelector('.map__pin');
-
-var mainForm = document.querySelector('.ad-form');
-var addressInput = mainForm.querySelector('#address');
-var fieldsets = mainForm.querySelectorAll('fieldset');
-var activeCard = map.querySelector('.map__card');
 var mainPinProperties = {
   'position': {
     'X': mainPin.offsetTop,
@@ -77,33 +77,33 @@ var mainPinProperties = {
   'HEIGHT': 65,
   'TAIL': 22
 };
-var submitBtn = mainForm.querySelector('.ad-form__submit');
-var resetBtn = mainForm.querySelector('.ad-form__reset');
+var mapPinsBlock = document.querySelector('.map__pins');
+var mapPin = mainTemplate.content.querySelector('.map__pin');
+
+var mainForm = document.querySelector('.ad-form');
+var fieldsets = mainForm.querySelectorAll('fieldset');
+var inputs = mainForm.querySelectorAll('input');
+var inputStyles = {
+  'INVALID': 'border-color: rgba(255, 0, 0, 1);',
+  'VALID': 'border: 1px solid rgba(217, 217, 217, 1);'
+};
 var titleInput = mainForm.querySelector('#title');
+var addressInput = mainForm.querySelector('#address');
 var priceInput = mainForm.querySelector('#price');
 var defaultPricePlaceholder = '1000';
 var houseType = mainForm.querySelector('#type');
-var offerTypesPrice = {
-  'flat': 1000,
-  'bungalo': 0,
-  'house': 5000,
-  'palace': 10000
-};
 var timeinSelect = mainForm.querySelector('#timein');
 var timeoutSelect = mainForm.querySelector('#timeout');
+var roomAmount = mainForm.querySelector('#room_number');
+var roomCapacity = mainForm.querySelector('#capacity');
 var matchRoomAndCapacity = {
   '1': ['1'],
   '2': ['1', '2'],
   '3': ['1', '2', '3'],
   '100': ['0']
 };
-var roomAmount = mainForm.querySelector('#room_number');
-var roomCapacity = mainForm.querySelector('#capacity');
-var inputStyles = {
-  'INVALID': 'border-color: rgba(255, 0, 0, 1);',
-  'VALID': 'border: 1px solid rgba(217, 217, 217, 1);'
-};
-var inputs = mainForm.querySelectorAll('input');
+var submitBtn = mainForm.querySelector('.ad-form__submit');
+var resetBtn = mainForm.querySelector('.ad-form__reset');
 
 var getRandomInteger = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -215,9 +215,8 @@ var getPhoto = function () {
 };
 
 var renderAd = function (card) {
-  if (activeCard !== null) {
-    removeAdCard();
-  }
+
+  removeAdCard();
 
   var adElement = cardTemplate.cloneNode(true);
   activeCard = adElement;
@@ -266,8 +265,10 @@ var resetInputs = function () {
 };
 
 var removeAdCard = function () {
-  activeCard.remove();
-  document.removeEventListener('keydown', removeAdCardWithEsc);
+  if (activeCard) {
+    activeCard.remove();
+    document.removeEventListener('keydown', removeAdCardWithEsc);
+  }
 };
 
 var removeAdCardWithEsc = function (evt) {
@@ -301,16 +302,12 @@ var activatePage = function () {
 var resetPage = function () {
   map.classList.add('map--faded');
   mainForm.classList.add('ad-form--disabled');
-
+  removeAdCard();
   mainForm.reset();
   resetInputs();
 
   for (var i = 0; i < pinsArray.length; i++) {
     pinsArray[i].remove();
-  }
-
-  if (activeCard) {
-    removeAdCard();
   }
 
   disabledForm();
@@ -345,10 +342,11 @@ var getEquivalentTime = function (select, value) {
   select.value = value;
 };
 
-var getEquivalentAmount = function (select, value) {
-  var notForGuestsValue = '0';
+var getEquivalentAmount = function (capacityRoom, amountRoomValue) {
+  var specialGuestValue = '0';
+  var specialRoomValue = '100';
 
-  select.value = matchRoomAndCapacity[roomAmount.value].includes(notForGuestsValue) ? notForGuestsValue : value;
+  capacityRoom.value = amountRoomValue !== specialRoomValue ? amountRoomValue : specialGuestValue;
 };
 
 var setMatchRoom = function () {
