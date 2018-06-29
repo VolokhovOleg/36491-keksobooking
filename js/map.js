@@ -64,18 +64,6 @@ var offerTypesPrice = {
 };
 var mainTemplate = document.querySelector('#ad-template');
 var map = document.querySelector('.map');
-var mapProperties = {
-  'size': {
-    'WIDTH': 1200,
-    'HEIGHT': 750
-  },
-  'border': {
-    'TOP': 51,
-    'RIGHT': 1135,
-    'BOTTOM': 551,
-    'LEFT': 0
-  }
-};
 var cardTemplate = mainTemplate.content.querySelector('.map__card');
 var activeCard = map.querySelector('.map__card');
 var container = document.querySelector('.map__filters-container');
@@ -88,6 +76,18 @@ var mainPinProperties = {
   'WIDTH': 65,
   'HEIGHT': 65,
   'TAIL': 14
+};
+var mapProperties = {
+  'size': {
+    'WIDTH': 1200,
+    'HEIGHT': 750
+  },
+  'border': {
+    'TOP': 130 - mainPinProperties.HEIGHT - mainPinProperties.TAIL,
+    'RIGHT': 1200 - mainPinProperties.WIDTH,
+    'BOTTOM': 630 - mainPinProperties.HEIGHT - mainPinProperties.TAIL,
+    'LEFT': 0
+  }
 };
 var mapPinsBlock = document.querySelector('.map__pins');
 var mapPin = mainTemplate.content.querySelector('.map__pin');
@@ -216,21 +216,15 @@ var setMainPin = function () {
   mainPin.style.left = Math.round((mapProperties.size.WIDTH - mainPinProperties.WIDTH) / 2) + 'px';
 };
 
+var getAddressValue = function (x, y) {
+  addressInput.value = x + ', ' + y;
+};
+
 var getMainPinPosition = function (x, y) {
   var mainPinPositionX = Math.round(x + mainPinProperties.HEIGHT + mainPinProperties.TAIL);
   var mainPinPositionY = Math.round(y + mainPinProperties.WIDTH / 2);
 
-  addressInput.value = mainPinPositionX + ', ' + mainPinPositionY;
-  return addressInput.value;
-};
-
-var getStartMainPinPosition = function () {
-  setMainPin();
-
-  var mainPinPositionX = Math.round(mainPinProperties.position.X + mainPinProperties.HEIGHT / 2);
-  var mainPinPositionY = Math.round(mainPinProperties.position.Y + mainPinProperties.WIDTH / 2);
-
-  addressInput.value = mainPinPositionX + ', ' + mainPinPositionY;
+  getAddressValue(mainPinPositionX, mainPinPositionY);
 };
 
 var getFeature = function (arr) {
@@ -329,7 +323,7 @@ var activatePage = function () {
   map.classList.remove('map--faded');
   getAdsArray(AMOUNT_OF_ADS);
   activateForm();
-  getMainPinPosition();
+  getMainPinPosition(mainPinProperties.position.X, mainPinProperties.position.Y);
   setMatchRoom();
 };
 
@@ -345,7 +339,8 @@ var resetPage = function () {
   }
 
   disabledForm();
-  getStartMainPinPosition();
+  getMainPinPosition(mainPinProperties.position.X, mainPinProperties.position.Y);
+  setMainPin();
   window.pinsArray = [];
 };
 
@@ -434,20 +429,23 @@ map.addEventListener('mousedown', function (evt) {
     };
 
     if (mainPin.offsetTop - shift.y <= mapProperties.border.TOP) {
-      mainPin.style.top = mapProperties.border.TOP + 'px';
+      var topPosition = mapProperties.border.TOP + 'px';
     } else if (mainPin.offsetTop - shift.y >= mapProperties.border.BOTTOM) {
-      mainPin.style.top = mapProperties.border.BOTTOM + 'px';
+      topPosition = mapProperties.border.BOTTOM + 'px';
     } else {
-      mainPin.style.top = (mainPin.offsetTop - shift.y) + 'px';
+      topPosition = (mainPin.offsetTop - shift.y) + 'px';
     }
 
     if (mainPin.offsetLeft - shift.x >= mapProperties.border.RIGHT) {
-      mainPin.style.left = mapProperties.border.RIGHT + 'px';
+      var leftPosition = mapProperties.border.RIGHT + 'px';
     } else if (mainPin.offsetLeft - shift.x <= mapProperties.border.LEFT) {
-      mainPin.style.left = mapProperties.border.LEFT + 'px';
+      leftPosition = mapProperties.border.LEFT + 'px';
     } else {
-      mainPin.style.left = (mainPin.offsetLeft - shift.x) + 'px';
+      leftPosition = (mainPin.offsetLeft - shift.x) + 'px';
     }
+
+    mainPin.style.top = topPosition;
+    mainPin.style.left = leftPosition;
 
     getMainPinPosition(mainPin.offsetTop, mainPin.offsetLeft);
   };
@@ -463,6 +461,6 @@ map.addEventListener('mousedown', function (evt) {
   getMainPinPosition(mainPin.offsetTop, mainPin.offsetLeft);
 });
 
-getStartMainPinPosition();
+getMainPinPosition(mainPin.offsetTop, mainPin.offsetLeft);
 
-disabledForm();
+disabledForm(mainPinProperties.position.X, mainPinProperties.position.Y);
