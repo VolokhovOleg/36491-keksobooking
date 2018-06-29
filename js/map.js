@@ -64,6 +64,18 @@ var offerTypesPrice = {
 };
 var mainTemplate = document.querySelector('#ad-template');
 var map = document.querySelector('.map');
+var mapProperties = {
+  'size': {
+    'WIDTH': 1200,
+    'HEIGHT': 750
+  },
+  'border': {
+    'TOP': 51,
+    'RIGHT': 1135,
+    'BOTTOM': 551,
+    'LEFT': 0
+  }
+};
 var cardTemplate = mainTemplate.content.querySelector('.map__card');
 var activeCard = map.querySelector('.map__card');
 var container = document.querySelector('.map__filters-container');
@@ -75,7 +87,7 @@ var mainPinProperties = {
   },
   'WIDTH': 65,
   'HEIGHT': 65,
-  'TAIL': 22
+  'TAIL': 14
 };
 var mapPinsBlock = document.querySelector('.map__pins');
 var mapPin = mainTemplate.content.querySelector('.map__pin');
@@ -199,6 +211,28 @@ var renderPin = function (array) {
   }
 };
 
+var setMainPin = function () {
+  mainPin.style.top = Math.round((mapProperties.size.HEIGHT - mainPinProperties.HEIGHT) / 2) + 'px';
+  mainPin.style.left = Math.round((mapProperties.size.WIDTH - mainPinProperties.WIDTH) / 2) + 'px';
+};
+
+var getMainPinPosition = function (x, y) {
+  var mainPinPositionX = Math.round(x + mainPinProperties.HEIGHT + mainPinProperties.TAIL);
+  var mainPinPositionY = Math.round(y + mainPinProperties.WIDTH / 2);
+
+  addressInput.value = mainPinPositionX + ', ' + mainPinPositionY;
+  return addressInput.value;
+};
+
+var getStartMainPinPosition = function () {
+  setMainPin();
+
+  var mainPinPositionX = Math.round(mainPinProperties.position.X + mainPinProperties.HEIGHT / 2);
+  var mainPinPositionY = Math.round(mainPinProperties.position.Y + mainPinProperties.WIDTH / 2);
+
+  addressInput.value = mainPinPositionX + ', ' + mainPinPositionY;
+};
+
 var getFeature = function (arr) {
   var tagName = document.createElement('li');
   tagName.classList.add('popup__feature', 'popup__feature--' + arr);
@@ -295,7 +329,7 @@ var activatePage = function () {
   map.classList.remove('map--faded');
   getAdsArray(AMOUNT_OF_ADS);
   activateForm();
-  getMainPinProperties(mainPinProperties.TAIL);
+  getMainPinPosition();
   setMatchRoom();
 };
 
@@ -311,16 +345,8 @@ var resetPage = function () {
   }
 
   disabledForm();
-  getMainPinProperties(0);
+  getStartMainPinPosition();
   window.pinsArray = [];
-};
-
-var getMainPinProperties = function (tail) {
-
-  var mainPinPositionX = Math.round(mainPinProperties.position.X + mainPinProperties.WIDTH / 2);
-  var mainPinPositionY = Math.round(mainPinProperties.position.Y + (mainPinProperties.HEIGHT / 2 + tail));
-
-  addressInput.value = mainPinPositionY + ', ' + mainPinPositionX;
 };
 
 var checkValidation = function (input) {
@@ -387,8 +413,56 @@ submitBtn.addEventListener('mouseup', function () {
 
 resetBtn.addEventListener('click', resetPage);
 
-mainPin.addEventListener('mouseup', activatePage);
+map.addEventListener('mousedown', function (evt) {
+  activatePage();
 
-getMainPinProperties(0);
+  var startCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
+
+  var onMouseMove = function (moveEvt) {
+
+    var shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY
+    };
+
+    startCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+
+    if (mainPin.offsetTop - shift.y <= mapProperties.border.TOP) {
+      mainPin.style.top = mapProperties.border.TOP + 'px';
+    } else if (mainPin.offsetTop - shift.y >= mapProperties.border.BOTTOM) {
+      mainPin.style.top = mapProperties.border.BOTTOM + 'px';
+    } else {
+      mainPin.style.top = (mainPin.offsetTop - shift.y) + 'px';
+    }
+
+    if (mainPin.offsetLeft - shift.x >= mapProperties.border.RIGHT) {
+      mainPin.style.left = mapProperties.border.RIGHT + 'px';
+    } else if (mainPin.offsetLeft - shift.x <= mapProperties.border.LEFT) {
+      mainPin.style.left = mapProperties.border.LEFT + 'px';
+    } else {
+      mainPin.style.left = (mainPin.offsetLeft - shift.x) + 'px';
+    }
+
+    getMainPinPosition(mainPin.offsetTop, mainPin.offsetLeft);
+  };
+
+  var onMouseUp = function () {
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+    getMainPinPosition(mainPin.offsetTop, mainPin.offsetLeft);
+  };
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+  getMainPinPosition(mainPin.offsetTop, mainPin.offsetLeft);
+});
+
+getStartMainPinPosition();
 
 disabledForm();
