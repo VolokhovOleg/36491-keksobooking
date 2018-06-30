@@ -83,9 +83,9 @@ var mapProperties = {
     'HEIGHT': 750
   },
   'border': {
-    'TOP': 130 - mainPinProperties.HEIGHT - mainPinProperties.TAIL,
-    'RIGHT': 1200 - mainPinProperties.WIDTH,
-    'BOTTOM': 630 - mainPinProperties.HEIGHT - mainPinProperties.TAIL,
+    'TOP': 130,
+    'RIGHT': 1200,
+    'BOTTOM': 630,
     'LEFT': 0
   }
 };
@@ -211,12 +211,12 @@ var renderPin = function (array) {
   }
 };
 
-var setMainPin = function () {
+var resetMainPin = function () {
   mainPin.style.top = Math.round((mapProperties.size.HEIGHT - mainPinProperties.HEIGHT) / 2) + 'px';
   mainPin.style.left = Math.round((mapProperties.size.WIDTH - mainPinProperties.WIDTH) / 2) + 'px';
 };
 
-var getAddressValue = function (x, y) {
+var showAddressValue = function (x, y) {
   addressInput.value = x + ', ' + y;
 };
 
@@ -224,7 +224,7 @@ var getMainPinPosition = function (x, y) {
   var mainPinPositionX = Math.round(x + mainPinProperties.HEIGHT + mainPinProperties.TAIL);
   var mainPinPositionY = Math.round(y + mainPinProperties.WIDTH / 2);
 
-  getAddressValue(mainPinPositionX, mainPinPositionY);
+  showAddressValue(mainPinPositionX, mainPinPositionY);
 };
 
 var getFeature = function (arr) {
@@ -340,7 +340,7 @@ var resetPage = function () {
 
   disabledForm();
   getMainPinPosition(mainPinProperties.position.X, mainPinProperties.position.Y);
-  setMainPin();
+  resetMainPin();
   window.pinsArray = [];
 };
 
@@ -428,20 +428,19 @@ map.addEventListener('mousedown', function (evt) {
       y: moveEvt.clientY
     };
 
-    if (mainPin.offsetTop - shift.y <= mapProperties.border.TOP) {
-      var topPosition = mapProperties.border.TOP + 'px';
-    } else if (mainPin.offsetTop - shift.y >= mapProperties.border.BOTTOM) {
-      topPosition = mapProperties.border.BOTTOM + 'px';
-    } else {
-      topPosition = (mainPin.offsetTop - shift.y) + 'px';
+    var topPosition = (mainPin.offsetTop - shift.y) + 'px';
+    var leftPosition = (mainPin.offsetLeft - shift.x) + 'px';
+
+    if (mainPin.offsetTop - shift.y <= (mapProperties.border.TOP - mainPinProperties.HEIGHT - mainPinProperties.TAIL)) {
+      topPosition = (mapProperties.border.TOP - mainPinProperties.HEIGHT - mainPinProperties.TAIL) + 'px';
+    } else if (mainPin.offsetTop - shift.y >= (mapProperties.border.BOTTOM - mainPinProperties.HEIGHT - mainPinProperties.TAIL)) {
+      topPosition = (mapProperties.border.BOTTOM - mainPinProperties.HEIGHT - mainPinProperties.TAIL) + 'px';
     }
 
-    if (mainPin.offsetLeft - shift.x >= mapProperties.border.RIGHT) {
-      var leftPosition = mapProperties.border.RIGHT + 'px';
+    if (mainPin.offsetLeft - shift.x >= mapProperties.border.RIGHT - mainPinProperties.WIDTH) {
+      leftPosition = mapProperties.border.RIGHT - mainPinProperties.WIDTH + 'px';
     } else if (mainPin.offsetLeft - shift.x <= mapProperties.border.LEFT) {
       leftPosition = mapProperties.border.LEFT + 'px';
-    } else {
-      leftPosition = (mainPin.offsetLeft - shift.x) + 'px';
     }
 
     mainPin.style.top = topPosition;
