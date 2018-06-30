@@ -75,7 +75,19 @@ var mainPinProperties = {
   },
   'WIDTH': 65,
   'HEIGHT': 65,
-  'TAIL': 22
+  'TAIL': 14
+};
+var mapProperties = {
+  'size': {
+    'WIDTH': 1200,
+    'HEIGHT': 750
+  },
+  'border': {
+    'TOP': 130,
+    'RIGHT': 1200,
+    'BOTTOM': 630,
+    'LEFT': 0
+  }
 };
 var mapPinsBlock = document.querySelector('.map__pins');
 var mapPin = mainTemplate.content.querySelector('.map__pin');
@@ -199,6 +211,22 @@ var renderPin = function (array) {
   }
 };
 
+var resetMainPin = function () {
+  mainPin.style.top = Math.round((mapProperties.size.HEIGHT - mainPinProperties.HEIGHT) / 2) + 'px';
+  mainPin.style.left = Math.round((mapProperties.size.WIDTH - mainPinProperties.WIDTH) / 2) + 'px';
+};
+
+var showAddressValue = function (x, y) {
+  addressInput.value = x + ', ' + y;
+};
+
+var getMainPinPosition = function (x, y) {
+  var mainPinPositionX = Math.round(x + mainPinProperties.HEIGHT + mainPinProperties.TAIL);
+  var mainPinPositionY = Math.round(y + mainPinProperties.WIDTH / 2);
+
+  showAddressValue(mainPinPositionX, mainPinPositionY);
+};
+
 var getFeature = function (arr) {
   var tagName = document.createElement('li');
   tagName.classList.add('popup__feature', 'popup__feature--' + arr);
@@ -295,7 +323,7 @@ var activatePage = function () {
   map.classList.remove('map--faded');
   getAdsArray(AMOUNT_OF_ADS);
   activateForm();
-  getMainPinProperties(mainPinProperties.TAIL);
+  getMainPinPosition(mainPinProperties.position.X, mainPinProperties.position.Y);
   setMatchRoom();
 };
 
@@ -311,16 +339,9 @@ var resetPage = function () {
   }
 
   disabledForm();
-  getMainPinProperties(0);
+  getMainPinPosition(mainPinProperties.position.X, mainPinProperties.position.Y);
+  resetMainPin();
   window.pinsArray = [];
-};
-
-var getMainPinProperties = function (tail) {
-
-  var mainPinPositionX = Math.round(mainPinProperties.position.X + mainPinProperties.WIDTH / 2);
-  var mainPinPositionY = Math.round(mainPinProperties.position.Y + (mainPinProperties.HEIGHT / 2 + tail));
-
-  addressInput.value = mainPinPositionY + ', ' + mainPinPositionX;
 };
 
 var checkValidation = function (input) {
@@ -387,8 +408,63 @@ submitBtn.addEventListener('mouseup', function () {
 
 resetBtn.addEventListener('click', resetPage);
 
-mainPin.addEventListener('mouseup', activatePage);
+map.addEventListener('mousedown', function (evt) {
+  activatePage();
 
-getMainPinProperties(0);
+  var startCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
 
-disabledForm();
+  var onMouseMove = function (moveEvt) {
+
+    var shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY
+    };
+
+    startCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+
+    var topPosition = (mainPin.offsetTop - shift.y) + 'px';
+    var leftPosition = (mainPin.offsetLeft - shift.x) + 'px';
+
+    var borderTop = mapProperties.border.TOP - mainPinProperties.HEIGHT - mainPinProperties.TAIL;
+    var borderRight = mapProperties.border.RIGHT - mainPinProperties.WIDTH;
+    var borderBottom = mapProperties.border.BOTTOM - mainPinProperties.HEIGHT - mainPinProperties.TAIL;
+    var borderLeft = mapProperties.border.LEFT;
+
+    if (mainPin.offsetTop - shift.y <= (borderTop)) {
+      topPosition = (borderTop) + 'px';
+    } else if (mainPin.offsetTop - shift.y >= (borderBottom)) {
+      topPosition = (borderBottom) + 'px';
+    }
+
+    if (mainPin.offsetLeft - shift.x >= borderRight) {
+      leftPosition = borderRight + 'px';
+    } else if (mainPin.offsetLeft - shift.x <= borderLeft) {
+      leftPosition = borderLeft + 'px';
+    }
+
+    mainPin.style.top = topPosition;
+    mainPin.style.left = leftPosition;
+
+    getMainPinPosition(mainPin.offsetTop, mainPin.offsetLeft);
+  };
+
+  var onMouseUp = function () {
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+    getMainPinPosition(mainPin.offsetTop, mainPin.offsetLeft);
+  };
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+  getMainPinPosition(mainPin.offsetTop, mainPin.offsetLeft);
+});
+
+getMainPinPosition(mainPin.offsetTop, mainPin.offsetLeft);
+
+disabledForm(mainPinProperties.position.X, mainPinProperties.position.Y);
