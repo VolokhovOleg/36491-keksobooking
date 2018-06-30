@@ -431,16 +431,21 @@ map.addEventListener('mousedown', function (evt) {
     var topPosition = (mainPin.offsetTop - shift.y) + 'px';
     var leftPosition = (mainPin.offsetLeft - shift.x) + 'px';
 
-    if (mainPin.offsetTop - shift.y <= (mapProperties.border.TOP - mainPinProperties.HEIGHT - mainPinProperties.TAIL)) {
-      topPosition = (mapProperties.border.TOP - mainPinProperties.HEIGHT - mainPinProperties.TAIL) + 'px';
-    } else if (mainPin.offsetTop - shift.y >= (mapProperties.border.BOTTOM - mainPinProperties.HEIGHT - mainPinProperties.TAIL)) {
-      topPosition = (mapProperties.border.BOTTOM - mainPinProperties.HEIGHT - mainPinProperties.TAIL) + 'px';
+    var borderTop = mapProperties.border.TOP - mainPinProperties.HEIGHT - mainPinProperties.TAIL;
+    var borderRight = mapProperties.border.RIGHT - mainPinProperties.WIDTH;
+    var borderBottom = mapProperties.border.BOTTOM - mainPinProperties.HEIGHT - mainPinProperties.TAIL;
+    var borderLeft = mapProperties.border.LEFT;
+
+    if (mainPin.offsetTop - shift.y <= (borderTop)) {
+      topPosition = (borderTop) + 'px';
+    } else if (mainPin.offsetTop - shift.y >= (borderBottom)) {
+      topPosition = (borderBottom) + 'px';
     }
 
-    if (mainPin.offsetLeft - shift.x >= mapProperties.border.RIGHT - mainPinProperties.WIDTH) {
-      leftPosition = mapProperties.border.RIGHT - mainPinProperties.WIDTH + 'px';
-    } else if (mainPin.offsetLeft - shift.x <= mapProperties.border.LEFT) {
-      leftPosition = mapProperties.border.LEFT + 'px';
+    if (mainPin.offsetLeft - shift.x >= borderRight) {
+      leftPosition = borderRight + 'px';
+    } else if (mainPin.offsetLeft - shift.x <= borderLeft) {
+      leftPosition = borderLeft + 'px';
     }
 
     mainPin.style.top = topPosition;
