@@ -1,17 +1,17 @@
 'use strict';
 
 (function () {
-  window.mainPin = document.querySelector('.map__pin--main');
-  window.mainPinProperties = {
+  var mainPin = document.querySelector('.map__pin--main');
+  var mainPinProperties = {
     'position': {
-      'X': window.mainPin.offsetTop,
-      'Y': window.mainPin.offsetLeft
+      'X': mainPin.offsetTop,
+      'Y': mainPin.offsetLeft
     },
     'WIDTH': 65,
     'HEIGHT': 65,
     'TAIL': 14
   };
-  window.mapProperties = {
+  var mapProperties = {
     'size': {
       'WIDTH': 1200,
       'HEIGHT': 750
@@ -25,7 +25,7 @@
   };
 
   window.resetMainPin = function () {
-    window.mainPin.style.top = Math.round((window.mapProperties.size.HEIGHT - window.mainPinProperties.HEIGHT) / 2) + 'px';
-    window.mainPin.style.left = Math.round((window.mapProperties.size.WIDTH - window.mainPinProperties.WIDTH) / 2) + 'px';
+    mainPin.style.top = Math.round((mapProperties.size.HEIGHT - mainPinProperties.HEIGHT) / 2) + 'px';
+    mainPin.style.left = Math.round((mapProperties.size.WIDTH - mainPinProperties.WIDTH) / 2) + 'px';
   };
 })();

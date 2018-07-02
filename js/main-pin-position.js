@@ -1,5 +1,7 @@
 'use strict';
 
 (function () {
-  window.getMainPinPosition(window.mainPin.offsetTop, window.mainPin.offsetLeft);
+  var mainPin = document.querySelector('.map__pin--main');
+
+  window.getMainPinPosition(mainPin.offsetTop, mainPin.offsetLeft);
 })();

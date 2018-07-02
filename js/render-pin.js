@@ -3,6 +3,7 @@
 (function () {
   window.pinsArray = [];
   var mainTemplate = document.querySelector('#ad-template');
+  var map = document.querySelector('.map');
   var pinSize = {
     WIDTH: 70,
     HEIGHT: 50
@@ -28,7 +29,7 @@
       pinElement.addEventListener('click', function () {
         var fragment = document.createDocumentFragment();
         fragment.appendChild(window.renderAd(array));
-        window.map.insertBefore(fragment, container);
+        map.insertBefore(fragment, container);
       });
 
       window.pinsArray.push(pinElement);
