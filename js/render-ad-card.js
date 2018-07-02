@@ -11,6 +11,7 @@
     'house': 'Дом',
     'palace': 'Дворец'
   };
+  window.activeCard = document.querySelector('.map__card');
   var mainTemplate = document.querySelector('#ad-template');
   var cardTemplate = mainTemplate.content.querySelector('.map__card');
   var cardElements = {
@@ -30,11 +31,10 @@
   };
 
   window.renderAd = function (card) {
-    var activeCard = document.querySelector('.map__card');
     window.removeAdCard();
 
     var adElement = cardTemplate.cloneNode(true);
-    activeCard = adElement;
+    window.activeCard = adElement;
     var rooms = card.offer.rooms;
     var guests = card.offer.guests;
     var closeAdBtn = adElement.querySelector('.popup__close');

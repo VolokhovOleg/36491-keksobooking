@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var mainPin = document.querySelector('.map__pin--main');
+  window.mainPin = document.querySelector('.map__pin--main');
 
-  window.getMainPinPosition(mainPin.offsetTop, mainPin.offsetLeft);
+  window.getMainPinPosition(window.mainPin.offsetTop, window.mainPin.offsetLeft);
 })();
