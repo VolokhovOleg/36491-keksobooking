@@ -41,14 +41,13 @@
   };
 
   window.createAd = function (i) {
-
     var locationX = window.getRandomInteger(houseLocation.X.MIN, houseLocation.X.MAX);
     var locationY = window.getRandomInteger(houseLocation.Y.MIN, houseLocation.Y.MAX);
     var avatarPath = i >= 9 ? (i + 1) : '0' + (i + 1);
 
     return {
       'author': {
-        'avatar': 'img/avatars/user' + avatarPath + '.png'
+        'avatar': 'img/avatars/user' + avatarPath + '.png',
       },
 
       'offer': {

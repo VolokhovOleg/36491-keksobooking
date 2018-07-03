@@ -1,49 +1,36 @@
 'use strict';
-
 (function () {
-  var mainForm = document.querySelector('.ad-form');
-  var fieldsets = mainForm.querySelectorAll('fieldset');
-  var inputs = mainForm.querySelectorAll('input');
+  window.mainForm = document.querySelector('.ad-form');
+  var fieldsets = window.mainForm.querySelectorAll('fieldset');
+  var inputs = window.mainForm.querySelectorAll('input');
   var inputStyles = {
     'INVALID': 'border-color: rgba(255, 0, 0, 1);',
     'VALID': 'border: 1px solid rgba(217, 217, 217, 1);'
   };
-  var titleInput = mainForm.querySelector('#title');
-  var addressInput = mainForm.querySelector('#address');
-  var priceInput = mainForm.querySelector('#price');
-  var defaultPricePlaceholder = '1000';
-  var houseType = mainForm.querySelector('#type');
-  var timeinSelect = mainForm.querySelector('#timein');
-  var timeoutSelect = mainForm.querySelector('#timeout');
-  var roomAmount = mainForm.querySelector('#room_number');
-  var roomCapacity = mainForm.querySelector('#capacity');
-  var matchRoomAndCapacity = {
-    '1': ['1'],
-    '2': ['1', '2'],
-    '3': ['1', '2', '3'],
-    '100': ['0']
-  };
-  var submitBtn = mainForm.querySelector('.ad-form__submit');
-  var resetBtn = mainForm.querySelector('.ad-form__reset');
   var offerTypesPrice = {
     'flat': 1000,
     'bungalo': 0,
     'house': 5000,
     'palace': 10000
   };
-
-  var showAddressValue = function (x, y) {
-    addressInput.value = x + ', ' + y;
+  var titleInput = window.mainForm.querySelector('#title');
+  var priceInput = window.mainForm.querySelector('#price');
+  var defaultPricePlaceholder = '1000';
+  var houseType = window.mainForm.querySelector('#type');
+  var timeinSelect = window.mainForm.querySelector('#timein');
+  var timeoutSelect = window.mainForm.querySelector('#timeout');
+  var roomAmount = window.mainForm.querySelector('#room_number');
+  var roomCapacity = window.mainForm.querySelector('#capacity');
+  var matchRoomAndCapacity = {
+    '1': ['1'],
+    '2': ['1', '2'],
+    '3': ['1', '2', '3'],
+    '100': ['0']
   };
+  var submitBtn = window.mainForm.querySelector('.ad-form__submit');
+  var resetBtn = window.mainForm.querySelector('.ad-form__reset');
 
-  window.getMainPinPosition = function (x, y) {
-    var mainPinPositionX = Math.round(x + window.mainPinProperties.HEIGHT + window.mainPinProperties.TAIL);
-    var mainPinPositionY = Math.round(y + window.mainPinProperties.WIDTH / 2);
-
-    showAddressValue(mainPinPositionX, mainPinPositionY);
-  };
-
-  var resetInputs = function () {
+  window.resetInputs = function () {
     priceInput.placeholder = defaultPricePlaceholder;
 
     for (var i = 0; i < inputs.length; i++) {
@@ -51,34 +38,17 @@
     }
   };
 
-  window.activateForm = function () {
-    for (var i = 0; i < fieldsets.length; i++) {
-      fieldsets[i].disabled = false;
-    }
-    mainForm.classList.remove('ad-form--disabled');
-  };
-
-  var disabledForm = function () {
+  window.disabledForm = function () {
     for (var i = 0; i < fieldsets.length; i++) {
       fieldsets[i].disabled = true;
     }
   };
 
-  var resetPage = function () {
-    window.map.classList.add('map--faded');
-    mainForm.classList.add('ad-form--disabled');
-    window.removeAdCard();
-    mainForm.reset();
-    resetInputs();
-
-    for (var i = 0; i < window.pinsArray.length; i++) {
-      window.pinsArray[i].remove();
+  window.activateForm = function () {
+    for (var i = 0; i < fieldsets.length; i++) {
+      fieldsets[i].disabled = false;
     }
-
-    disabledForm();
-    window.getMainPinPosition(window.mainPinProperties.position.X, window.mainPinProperties.position.Y);
-    window.resetMainPin();
-    window.pinsArray = [];
+    window.mainForm.classList.remove('ad-form--disabled');
   };
 
   var checkValidation = function (input) {
@@ -143,8 +113,8 @@
     checkValidation(titleInput);
   });
 
-  resetBtn.addEventListener('click', resetPage);
+  resetBtn.addEventListener('click', window.resetPage);
 
-  disabledForm(window.mainPinProperties.position.X, window.mainPinProperties.position.Y);
+  window.disabledForm(window.mainPinProperties.position.X, window.mainPinProperties.position.Y);
 
 })();
