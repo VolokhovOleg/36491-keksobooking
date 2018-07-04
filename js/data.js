@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var offers = {
+  var offerList = {
     TITLES: [
       'Большая уютная квартира',
       'Маленькая неуютная квартира',
@@ -41,8 +41,8 @@
   };
 
   window.createAd = function (i) {
-    var locationX = window.getRandomInteger(houseLocation.X.MIN, houseLocation.X.MAX);
-    var locationY = window.getRandomInteger(houseLocation.Y.MIN, houseLocation.Y.MAX);
+    var locationX = window.utils.getRandomInteger(houseLocation.X.MIN, houseLocation.X.MAX);
+    var locationY = window.utils.getRandomInteger(houseLocation.Y.MIN, houseLocation.Y.MAX);
     var avatarPath = i >= 9 ? (i + 1) : '0' + (i + 1);
 
     return {
@@ -51,17 +51,17 @@
       },
 
       'offer': {
-        'title': window.getRandomIndex(offers.TITLES),
+        'title': window.utils.getRandomIndex(offerList.TITLES),
         'address': locationX + ', ' + locationY,
-        'price': window.getRandomInteger(price.MIN, price.MAX),
-        'type': window.getRandomIndex(offers.TYPES),
-        'rooms': window.getRandomInteger(roomsAmount.MIN, roomsAmount.MAX),
-        'guests': window.getRandomInteger(guestsAmount.MIN, guestsAmount.MAX),
-        'checkin': window.getRandomIndex(offers.CHECK_TIME),
-        'checkout': window.getRandomIndex(offers.CHECK_TIME),
-        'features': window.getRandomLengthOfArray(window.shuffleArr(offers.FEATURES)),
+        'price': window.utils.getRandomInteger(price.MIN, price.MAX),
+        'type': window.utils.getRandomIndex(offerList.TYPES),
+        'rooms': window.utils.getRandomInteger(roomsAmount.MIN, roomsAmount.MAX),
+        'guests': window.utils.getRandomInteger(guestsAmount.MIN, guestsAmount.MAX),
+        'checkin': window.utils.getRandomIndex(offerList.CHECK_TIME),
+        'checkout': window.utils.getRandomIndex(offerList.CHECK_TIME),
+        'features': window.utils.getRandomLengthOfArray(window.utils.shuffleArr(offerList.FEATURES)),
         'description': '',
-        'photos': window.shuffleArr(offers.PHOTOS)
+        'photos': window.utils.shuffleArr(offerList.PHOTOS)
       },
 
       'location': {

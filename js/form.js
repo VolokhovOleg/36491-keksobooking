@@ -1,8 +1,8 @@
 'use strict';
 (function () {
-  window.mainForm = document.querySelector('.ad-form');
-  var fieldsets = window.mainForm.querySelectorAll('fieldset');
-  var inputs = window.mainForm.querySelectorAll('input');
+  var mainForm = document.querySelector('.ad-form');
+  var fieldsets = mainForm.querySelectorAll('fieldset');
+  var inputs = mainForm.querySelectorAll('input');
   var inputStyles = {
     'INVALID': 'border-color: rgba(255, 0, 0, 1);',
     'VALID': 'border: 1px solid rgba(217, 217, 217, 1);'
@@ -13,43 +13,22 @@
     'house': 5000,
     'palace': 10000
   };
-  var titleInput = window.mainForm.querySelector('#title');
-  var priceInput = window.mainForm.querySelector('#price');
+  var titleInput = mainForm.querySelector('#title');
+  var priceInput = mainForm.querySelector('#price');
   var defaultPricePlaceholder = '1000';
-  var houseType = window.mainForm.querySelector('#type');
-  var timeinSelect = window.mainForm.querySelector('#timein');
-  var timeoutSelect = window.mainForm.querySelector('#timeout');
-  var roomAmount = window.mainForm.querySelector('#room_number');
-  var roomCapacity = window.mainForm.querySelector('#capacity');
+  var houseType = mainForm.querySelector('#type');
+  var timeinSelect = mainForm.querySelector('#timein');
+  var timeoutSelect = mainForm.querySelector('#timeout');
+  var roomAmount = mainForm.querySelector('#room_number');
+  var roomCapacity = mainForm.querySelector('#capacity');
   var matchRoomAndCapacity = {
     '1': ['1'],
     '2': ['1', '2'],
     '3': ['1', '2', '3'],
     '100': ['0']
   };
-  var submitBtn = window.mainForm.querySelector('.ad-form__submit');
-  var resetBtn = window.mainForm.querySelector('.ad-form__reset');
-
-  window.resetInputs = function () {
-    priceInput.placeholder = defaultPricePlaceholder;
-
-    for (var i = 0; i < inputs.length; i++) {
-      inputs[i].style = inputStyles.VALID;
-    }
-  };
-
-  window.disabledForm = function () {
-    for (var i = 0; i < fieldsets.length; i++) {
-      fieldsets[i].disabled = true;
-    }
-  };
-
-  window.activateForm = function () {
-    for (var i = 0; i < fieldsets.length; i++) {
-      fieldsets[i].disabled = false;
-    }
-    window.mainForm.classList.remove('ad-form--disabled');
-  };
+  var submitBtn = mainForm.querySelector('.ad-form__submit');
+  var resetBtn = mainForm.querySelector('.ad-form__reset');
 
   var checkValidation = function (input) {
     if (input.validity.tooShort) {
@@ -74,13 +53,15 @@
     capacityRoom.value = matchRoomAndCapacity[roomAmount.value].includes(amountRoomValue) ? amountRoomValue : matchRoomAndCapacity[amountRoomValue];
   };
 
-  window.setMatchRoom = function () {
+  var setMatchRoom = function () {
     for (var i = 0; i < roomCapacity.options.length; i++) {
       roomCapacity.options[i].disabled = (!matchRoomAndCapacity[roomAmount.value].includes(roomCapacity.options[i].value));
     }
 
     getEquivalentAmount(roomCapacity, roomAmount.value);
   };
+
+  setMatchRoom();
 
   titleInput.addEventListener('change', function () {
     checkValidation(titleInput);
@@ -106,15 +87,37 @@
     getEquivalentTime(timeinSelect, timeoutSelect.value);
   });
 
-  roomAmount.addEventListener('change', window.setMatchRoom);
+  roomAmount.addEventListener('change', setMatchRoom);
 
   submitBtn.addEventListener('mouseup', function () {
     checkValidation(priceInput);
     checkValidation(titleInput);
   });
 
-  resetBtn.addEventListener('click', window.resetPage);
+  resetBtn.addEventListener('click', function () {
+    window.resetPage();
+    mainForm.classList.add('ad-form--disabled');
+    mainForm.reset();
+  });
 
-  window.disabledForm(window.mainPinProperties.position.X, window.mainPinProperties.position.Y);
+  window.form = {
+    'resetInputs': function () {
+      priceInput.placeholder = defaultPricePlaceholder;
 
+      for (var i = 0; i < inputs.length; i++) {
+        inputs[i].style = inputStyles.VALID;
+      }
+    },
+    'disabledForm': function () {
+      for (var i = 0; i < fieldsets.length; i++) {
+        fieldsets[i].disabled = true;
+      }
+    },
+    'activateForm': function () {
+      for (var i = 0; i < fieldsets.length; i++) {
+        fieldsets[i].disabled = false;
+      }
+      mainForm.classList.remove('ad-form--disabled');
+    }
+  };
 })();
