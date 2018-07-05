@@ -3,7 +3,7 @@
   var mainForm = document.querySelector('.ad-form');
   var fieldsets = mainForm.querySelectorAll('fieldset');
   var inputs = mainForm.querySelectorAll('input');
-  var inputStyles = {
+  var inputStyle = {
     'INVALID': 'border-color: rgba(255, 0, 0, 1);',
     'VALID': 'border: 1px solid rgba(217, 217, 217, 1);'
   };
@@ -32,16 +32,16 @@
 
   var checkValidation = function (input) {
     if (input.validity.tooShort) {
-      input.style = inputStyles.INVALID;
+      input.style = inputStyle.INVALID;
     } else if (input.validity.valueMissing) {
-      input.style = inputStyles.INVALID;
+      input.style = inputStyle.INVALID;
     } else if (priceInput.validity.rangeOverflow) {
-      input.style = inputStyles.INVALID;
+      input.style = inputStyle.INVALID;
     } else if (priceInput.validity.rangeUnderflow) {
-      input.style = inputStyles.INVALID;
+      input.style = inputStyle.INVALID;
     } else {
       input.setCustomValidity('');
-      input.style = inputStyles.VALID;
+      input.style = inputStyle.VALID;
     }
   };
 
@@ -61,6 +61,14 @@
     getEquivalentAmount(roomCapacity, roomAmount.value);
   };
 
+  var resetInputs = function () {
+    priceInput.placeholder = defaultPricePlaceholder;
+
+    for (var i = 0; i < inputs.length; i++) {
+      inputs[i].style = inputStyle.VALID;
+    }
+  };
+
   setMatchRoom();
 
   titleInput.addEventListener('change', function () {
@@ -75,7 +83,7 @@
     priceInput.placeholder = offerTypesPrice[houseType.value];
     priceInput.min = offerTypesPrice[houseType.value];
     if (priceInput.min < priceInput.value || priceInput.max < priceInput.value) {
-      priceInput.style = inputStyles.INVALID;
+      priceInput.style = inputStyle.INVALID;
     }
   });
 
@@ -95,25 +103,19 @@
   });
 
   resetBtn.addEventListener('click', function () {
+    resetInputs();
     window.resetPage();
     mainForm.classList.add('ad-form--disabled');
     mainForm.reset();
   });
 
   window.form = {
-    'resetInputs': function () {
-      priceInput.placeholder = defaultPricePlaceholder;
-
-      for (var i = 0; i < inputs.length; i++) {
-        inputs[i].style = inputStyles.VALID;
-      }
-    },
-    'disabledForm': function () {
+    disabled: function () {
       for (var i = 0; i < fieldsets.length; i++) {
         fieldsets[i].disabled = true;
       }
     },
-    'activateForm': function () {
+    activate: function () {
       for (var i = 0; i < fieldsets.length; i++) {
         fieldsets[i].disabled = false;
       }
