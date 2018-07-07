@@ -5,12 +5,13 @@
     WIDTH: 70,
     HEIGHT: 50
   };
+  var pinsArray = [];
   var mainTemplate = document.querySelector('#ad-template');
   var mapPinsBlock = document.querySelector('.map__pins');
   var mapPin = mainTemplate.content.querySelector('.map__pin');
 
-  window.renderPin = function (array) {
-    if (window.data.array.pins.length < window.data.AMOUNT_OF_ADS) {
+  window.pins = {
+    render: function (array) {
       var pinElement = mapPin.cloneNode(true);
       var pinImg = pinElement.querySelector('img');
 
@@ -24,12 +25,18 @@
       pinImg.alt = array.offer.title;
 
       pinElement.addEventListener('click', function () {
-        window.createCard.getAd(array);
+        window.card.render(array);
       });
 
-      window.data.array.pins.push(pinElement);
+      pinsArray.push(pinElement);
 
       mapPinsBlock.appendChild(pinElement);
+    },
+    delete: function () {
+      for (var i = 0; i < pinsArray.length; i++) {
+        pinsArray[i].remove();
+      }
+      pinsArray = [];
     }
   };
 })();

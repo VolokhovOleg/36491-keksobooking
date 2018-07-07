@@ -40,41 +40,34 @@
     MAX: 1000000
   };
 
-  window.data = {
-    AMOUNT_OF_ADS: 8,
-    array: {
-      ads: [],
-      pins: []
-    },
-    createAd: function (i) {
-      var locationX = window.utils.getRandomInteger(houseLocation.X.MIN, houseLocation.X.MAX);
-      var locationY = window.utils.getRandomInteger(houseLocation.Y.MIN, houseLocation.Y.MAX);
-      var avatarPath = i >= 9 ? (i + 1) : '0' + (i + 1);
+  window.createData = function (i) {
+    var locationX = window.utils.getRandomInteger(houseLocation.X.MIN, houseLocation.X.MAX);
+    var locationY = window.utils.getRandomInteger(houseLocation.Y.MIN, houseLocation.Y.MAX);
+    var avatarPath = i >= 9 ? (i + 1) : '0' + (i + 1);
 
-      return {
-        'author': {
-          'avatar': 'img/avatars/user' + avatarPath + '.png',
-        },
+    return {
+      'author': {
+        'avatar': 'img/avatars/user' + avatarPath + '.png',
+      },
 
-        'offer': {
-          'title': window.utils.getRandomIndex(offerData.TITLES),
-          'address': locationX + ', ' + locationY,
-          'price': window.utils.getRandomInteger(price.MIN, price.MAX),
-          'type': window.utils.getRandomIndex(offerData.TYPES),
-          'rooms': window.utils.getRandomInteger(roomsAmount.MIN, roomsAmount.MAX),
-          'guests': window.utils.getRandomInteger(guestsAmount.MIN, guestsAmount.MAX),
-          'checkin': window.utils.getRandomIndex(offerData.CHECK_TIME),
-          'checkout': window.utils.getRandomIndex(offerData.CHECK_TIME),
-          'features': window.utils.getRandomLengthOfArray(window.utils.shuffleArr(offerData.FEATURES)),
-          'description': '',
-          'photos': window.utils.shuffleArr(offerData.PHOTOS)
-        },
+      'offer': {
+        'title': window.utils.getRandomIndex(offerData.TITLES),
+        'address': locationX + ', ' + locationY,
+        'price': window.utils.getRandomInteger(price.MIN, price.MAX),
+        'type': window.utils.getRandomIndex(offerData.TYPES),
+        'rooms': window.utils.getRandomInteger(roomsAmount.MIN, roomsAmount.MAX),
+        'guests': window.utils.getRandomInteger(guestsAmount.MIN, guestsAmount.MAX),
+        'checkin': window.utils.getRandomIndex(offerData.CHECK_TIME),
+        'checkout': window.utils.getRandomIndex(offerData.CHECK_TIME),
+        'features': window.utils.getRandomLengthOfArray(window.utils.shuffleArr(offerData.FEATURES)),
+        'description': '',
+        'photos': window.utils.shuffleArr(offerData.PHOTOS)
+      },
 
-        'location': {
-          'x': locationX,
-          'y': locationY
-        }
-      };
-    }
+      'location': {
+        'x': locationX,
+        'y': locationY
+      }
+    };
   };
 })();

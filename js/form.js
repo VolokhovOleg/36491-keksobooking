@@ -45,11 +45,11 @@
     }
   };
 
-  var getEquivalentTime = function (select, value) {
+  var makeEquivalentTime = function (select, value) {
     select.value = value;
   };
 
-  var getEquivalentAmount = function (capacityRoom, amountRoomValue) {
+  var makeEquivalentAmount = function (capacityRoom, amountRoomValue) {
     capacityRoom.value = matchRoomAndCapacity[roomAmount.value].includes(amountRoomValue) ? amountRoomValue : matchRoomAndCapacity[amountRoomValue];
   };
 
@@ -58,7 +58,7 @@
       roomCapacity.options[i].disabled = (!matchRoomAndCapacity[roomAmount.value].includes(roomCapacity.options[i].value));
     }
 
-    getEquivalentAmount(roomCapacity, roomAmount.value);
+    makeEquivalentAmount(roomCapacity, roomAmount.value);
   };
 
   var resetInputs = function () {
@@ -88,11 +88,11 @@
   });
 
   timeinSelect.addEventListener('change', function () {
-    getEquivalentTime(timeoutSelect, timeinSelect.value);
+    makeEquivalentTime(timeoutSelect, timeinSelect.value);
   });
 
   timeoutSelect.addEventListener('change', function () {
-    getEquivalentTime(timeinSelect, timeoutSelect.value);
+    makeEquivalentTime(timeinSelect, timeoutSelect.value);
   });
 
   roomAmount.addEventListener('change', setMatchRoom);
@@ -110,7 +110,7 @@
   });
 
   window.form = {
-    disabled: function () {
+    disable: function () {
       for (var i = 0; i < fieldsets.length; i++) {
         fieldsets[i].disabled = true;
       }
