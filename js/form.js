@@ -29,7 +29,16 @@
   };
   var submitBtn = mainForm.querySelector('.ad-form__submit');
   var resetBtn = mainForm.querySelector('.ad-form__reset');
+  var onError = function (error) {
+    popupErrorMessage.textContent = error;
+    popupError.hidden = false;
+  };
 
+  var onLoad = function (data) {
+    for (var i = 0; i < data.length; i++) {
+      window.pins.render(data[i]);
+    }
+  };
   var checkValidation = function (input) {
     if (input.validity.tooShort) {
       input.style = inputStyle.INVALID;
@@ -97,9 +106,11 @@
 
   roomAmount.addEventListener('change', setMatchRoom);
 
-  submitBtn.addEventListener('mouseup', function () {
+  submitBtn.addEventListener('submit', function (evt) {
+    evt.preventDefault();
     checkValidation(priceInput);
     checkValidation(titleInput);
+    window.sendForm(new FormData(onError, onLoad, mainForm));
   });
 
   resetBtn.addEventListener('click', function () {

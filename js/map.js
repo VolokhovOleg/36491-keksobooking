@@ -4,6 +4,8 @@
   var addressInput = document.querySelector('#address');
   var map = document.querySelector('.map');
   var mainPin = document.querySelector('.map__pin--main');
+  var popupError = document.querySelector('.popup-error');
+  var popupErrorMessage = popupError.querySelector('.popup-error__message');
   var mapProperties = {
     'size': {
       'WIDTH': 1200,
@@ -25,11 +27,15 @@
     'HEIGHT': 65,
     'TAIL': 14
   };
-  var ads = [];
-  var generateAds = function () {
-    for (var i = 0; i < window.data.length; i++) {
-      ads[i] = window.data[i];
-      window.pins.render(ads[i]);
+
+  var onError = function (error) {
+    popupErrorMessage.textContent = error;
+    popupError.hidden = false;
+  };
+
+  var onLoad = function (data) {
+    for (var i = 0; i < data.length; i++) {
+      window.pins.render(data[i]);
     }
   };
 
@@ -51,7 +57,7 @@
 
   var activatePage = function () {
     map.classList.remove('map--faded');
-    generateAds();
+    window.dataLoad(onError, onLoad);
     window.form.activate();
     createMainPinPosition(mainPinProperties.position.X, mainPinProperties.position.Y);
   };

@@ -1216,3 +1216,24 @@ fieldset {
       -ms-transform: translateX(-50%);
           transform: translateX(-50%);
 }
+
+.popup-error {
+  padding: 15px;
+
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+
+  width: 300px;
+  min-height: 100px;
+
+  color: #000000;
+  font-size: 24px;
+  text-align: center;
+
+  background-color: #ffffff;
+
+  -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+}

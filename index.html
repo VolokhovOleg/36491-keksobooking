@@ -90,7 +90,7 @@
     <section class="notice">
       <h2 class="notice__title">Ваше объявление</h2>
 
-      <form class="ad-form ad-form--disabled" action="https://js.dump.academy/keksobooking" method="post" enctype="multipart/form-data" autocomplete="off">
+      <form class="ad-form ad-form--disabled" method="post" enctype="multipart/form-data" autocomplete="off">
         <fieldset class="ad-form-header">
           <legend class="ad-form-header__title">Ваша фотография (для карты)</legend>
           <div class="ad-form-header__upload">
@@ -238,6 +238,10 @@
     </ul>
   </footer>
 
+  <div class="popup-error" hidden>
+    <p class="popup-error__message">Текст сообщения.</p>
+  </div>
+
   <template id="ad-template">
     <article class="map__card popup">
       <img src="img/avatars/user01.png" class="popup__avatar" width="70" height="70" alt="Аватар пользователя">
@@ -256,10 +260,6 @@
     </article>
 
     <button type="button" class="map__pin" style="left: 200px; top: 400px;"><img src="img/avatars/user07.png" width="40" height="40" draggable="false" alt="Метка объявления"></button>
-
-    <div class="popup-error" hidden>
-      <p class="popup-error__message">Текст сообщения.</p>
-    </div>
   </template>
   <script src="js/backend.js "></script>
   <script src="js/utils.js"></script>
