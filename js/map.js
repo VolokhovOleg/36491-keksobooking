@@ -26,10 +26,9 @@
     'TAIL': 14
   };
   var ads = [];
-  var AMOUNT_OF_ADS = 8;
   var generateAds = function () {
-    for (var i = 0; i < AMOUNT_OF_ADS; i++) {
-      ads[i] = window.createData(i);
+    for (var i = 0; i < window.data.length; i++) {
+      ads[i] = window.data[i];
       window.pins.render(ads[i]);
     }
   };
