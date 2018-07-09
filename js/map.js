@@ -4,8 +4,6 @@
   var addressInput = document.querySelector('#address');
   var map = document.querySelector('.map');
   var mainPin = document.querySelector('.map__pin--main');
-  var popupError = document.querySelector('.popup-error');
-  var popupErrorMessage = popupError.querySelector('.popup-error__message');
   var mapProperties = {
     'size': {
       'WIDTH': 1200,
@@ -28,24 +26,19 @@
     'TAIL': 14
   };
 
-  var onError = function (error) {
-    popupErrorMessage.textContent = error;
-    popupError.hidden = false;
-  };
-
-  var onLoad = function (data) {
+  var createAds = function (data) {
     for (var i = 0; i < data.length; i++) {
       window.pins.render(data[i]);
     }
   };
 
+  var showAddressValue = function (x, y) {
+    addressInput.value = x + ', ' + y;
+  };
+
   var resetMainPin = function () {
     mainPin.style.top = Math.round((mapProperties.size.HEIGHT - mainPinProperties.HEIGHT) / 2) + 'px';
     mainPin.style.left = Math.round((mapProperties.size.WIDTH - mainPinProperties.WIDTH) / 2) + 'px';
-  };
-
-  var showAddressValue = function (x, y) {
-    addressInput.value = x + ', ' + y;
   };
 
   var createMainPinPosition = function (x, y) {
@@ -57,7 +50,7 @@
 
   var activatePage = function () {
     map.classList.remove('map--faded');
-    window.dataLoad(onError, onLoad);
+    window.backend.dataLoad(window.backend.onError, createAds);
     window.form.activate();
     createMainPinPosition(mainPinProperties.position.X, mainPinProperties.position.Y);
   };
@@ -123,12 +116,20 @@
 
   createMainPinPosition(mainPin.offsetTop, mainPin.offsetLeft);
 
-  window.resetPage = function () {
-    map.classList.add('map--faded');
-    window.pins.delete();
-    window.card.remove();
-    window.form.disable();
-    createMainPinPosition(mainPinProperties.position.X, mainPinProperties.position.Y);
-    resetMainPin();
+  window.map = {
+    resetPage: function () {
+      map.classList.add('map--faded');
+      window.pins.delete();
+      window.card.remove();
+      window.form.disable();
+      createMainPinPosition(mainPinProperties.position.X, mainPinProperties.position.Y);
+      resetMainPin();
+    },
+    getMainPinPosition: function () {
+      var x = Math.round(mainPin.offsetTop + mainPinProperties.HEIGHT + mainPinProperties.TAIL);
+      var y = Math.round(mainPin.offsetLeft + mainPinProperties.WIDTH / 2);
+
+      return showAddressValue(x, y);
+    }
   };
 })();
