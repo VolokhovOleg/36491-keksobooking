@@ -124,12 +124,6 @@
       window.form.disable();
       createMainPinPosition(mainPinProperties.position.X, mainPinProperties.position.Y);
       resetMainPin();
-    },
-    getMainPinPosition: function () {
-      var x = Math.round(mainPin.offsetTop + mainPinProperties.HEIGHT + mainPinProperties.TAIL);
-      var y = Math.round(mainPin.offsetLeft + mainPinProperties.WIDTH / 2);
-
-      return showAddressValue(x, y);
     }
   };
 })();

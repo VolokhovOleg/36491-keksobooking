@@ -29,10 +29,25 @@
   };
   var submitBtn = mainForm.querySelector('.ad-form__submit');
   var resetBtn = mainForm.querySelector('.ad-form__reset');
+  var succesMessage = document.querySelector('.success');
+
+  var removeSuccesMessage = function () {
+    succesMessage.classList.add('hidden');
+    document.removeEventListener('keydown', onSuccesMessageEscPress);
+  };
+
+  var onSuccesMessageEscPress = function (evt) {
+    if (evt.keyCode === window.card.ESC_KEYCODE) {
+      succesMessage.classList.add('hidden');
+      document.removeEventListener('keydown', onSuccesMessageEscPress);
+    }
+  };
 
   var resetForm = function () {
-    mainForm.reset();
-    window.map.getMainPinPosition();
+    window.map.resetPage();
+    succesMessage.classList.remove('hidden');
+    succesMessage.addEventListener('click', removeSuccesMessage);
+    document.addEventListener('keydown', onSuccesMessageEscPress);
   };
 
   var checkValidation = function (input) {
@@ -121,6 +136,9 @@
 
   window.form = {
     disable: function () {
+      mainForm.reset();
+      mainForm.classList.add('ad-form--disabled');
+
       for (var i = 0; i < fieldsets.length; i++) {
         fieldsets[i].disabled = true;
       }
