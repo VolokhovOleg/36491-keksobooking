@@ -1,31 +1,39 @@
 'use strict';
 
 (function () {
-  var statusName = {
-    'OK': 200,
-    'PAGE_NOT_FOUND': 404,
-    'SERVER_ERROR': 500
-  };
   var popupError = document.querySelector('.popup-error');
   var popupErrorMessage = popupError.querySelector('.popup-error__message');
   var errorMessage = {
-    'number': {
-      404: 'Страница не найдена.',
-      500: 'Проблема с сервером.'
-    },
+    'pageNotFound': 'Страница не найдена.',
+    'ServerError': 'Проблема с сервером.',
     'unknownError': 'Ошибка, попробуйте позже.',
     'timeout': 'Запрос выполняется слишком долго.',
     'network': 'Потеряно подключение к интернету.'
   };
-  var thirtySeconds = 30000;
+  var tenSeconds = 10000;
   var url = {
-    'ads_data': 'https://js.dump.academy/keksobooking/data',
-    'form': 'https://js.dump.academy/keksobooking'
+    'ADS_DATA': 'https://js.dump.academy/keksobooking/data',
+    'FORM': 'https://js.dump.academy/keksobooking'
   };
 
   var createRequest = function (onError, onLoad, request) {
+    var requestStatus = {
+      200: function () {
+        onLoad(request.response);
+      },
+      404: function () {
+        onError(errorMessage.pageNotFound);
+      },
+      500: function () {
+        onError(errorMessage.ServerError);
+      },
+      default: function () {
+        onError(errorMessage.unknownError);
+      }
+    };
+
     request.responseType = 'json';
-    request.timeout = thirtySeconds;
+    request.timeout = tenSeconds;
 
     request.addEventListener('error', function () {
       onError(errorMessage.network);
@@ -36,19 +44,7 @@
     });
 
     request.addEventListener('load', function () {
-      switch (request.status) {
-        case statusName.OK:
-          onLoad(request.response);
-          break;
-        case statusName.PAGE_NOT_FOUND:
-          onError(errorMessage.number[statusName.PAGE_NOT_FOUND]);
-          break;
-        case statusName.SERVER_ERROR:
-          onError(errorMessage.number[statusName.SERVER_ERROR]);
-          break;
-        default:
-          onError(errorMessage.unknownError);
-      }
+      (requestStatus[request.status] || requestStatus['default'])();
     });
   };
 
@@ -56,13 +52,13 @@
     dataLoad: function (onError, onLoad) {
       var xhr = new XMLHttpRequest();
       createRequest(onError, onLoad, xhr);
-      xhr.open('GET', url.ads_data);
+      xhr.open('GET', url.ADS_DATA);
       xhr.send();
     },
     sendForm: function (onError, onLoad, data) {
       var xhr = new XMLHttpRequest();
       createRequest(onError, onLoad, xhr);
-      xhr.open('POST', url.form);
+      xhr.open('POST', url.FORM);
       xhr.send(data);
     },
     onError: function (error) {
