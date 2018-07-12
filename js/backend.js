@@ -10,7 +10,7 @@
     'TIMEOUT': 'Запрос выполняется слишком долго.',
     'NETWORK': 'Потеряно подключение к интернету.'
   };
-  var timeoutDuration = 10000;
+  var TIMEOUT_DURATION = 10000;
   var url = {
     'adsData': 'https://js.dump.academy/keksobooking/data',
     'form': 'https://js.dump.academy/keksobooking'
@@ -33,7 +33,7 @@
     };
 
     request.responseType = 'json';
-    request.timeout = timeoutDuration;
+    request.timeout = TIMEOUT_DURATION;
 
     request.addEventListener('error', function () {
       onError(errorMessage.NETWORK);
