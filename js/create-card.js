@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-  var ESC_KEYCODE = 27;
   var mainTemplate = document.querySelector('#ad-template');
   var cardTemplate = mainTemplate.content.querySelector('.map__card');
   var container = document.querySelector('.map__filters-container');
@@ -41,7 +40,7 @@
   };
 
   var onAdCardEscPress = function (evt) {
-    if (evt.keyCode === ESC_KEYCODE && activeCard !== null) {
+    if (window.utils.isEscKeycode(evt.keyCode)) {
       removeAdCard();
       document.removeEventListener('keydown', onAdCardEscPress);
     }

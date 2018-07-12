@@ -25,22 +25,20 @@
     'HEIGHT': 65,
     'TAIL': 14
   };
-  var ads = [];
-  var AMOUNT_OF_ADS = 8;
-  var generateAds = function () {
-    for (var i = 0; i < AMOUNT_OF_ADS; i++) {
-      ads[i] = window.createData(i);
-      window.pins.render(ads[i]);
+
+  var createAds = function (data) {
+    for (var i = 0; i < data.length; i++) {
+      window.pins.render(data[i]);
     }
+  };
+
+  var showAddressValue = function (x, y) {
+    addressInput.value = y + ', ' + x;
   };
 
   var resetMainPin = function () {
     mainPin.style.top = Math.round((mapProperties.size.HEIGHT - mainPinProperties.HEIGHT) / 2) + 'px';
     mainPin.style.left = Math.round((mapProperties.size.WIDTH - mainPinProperties.WIDTH) / 2) + 'px';
-  };
-
-  var showAddressValue = function (x, y) {
-    addressInput.value = x + ', ' + y;
   };
 
   var createMainPinPosition = function (x, y) {
@@ -52,7 +50,7 @@
 
   var activatePage = function () {
     map.classList.remove('map--faded');
-    generateAds();
+    window.backend.dataLoad(window.backend.onError, createAds);
     window.form.activate();
     createMainPinPosition(mainPinProperties.position.X, mainPinProperties.position.Y);
   };
@@ -83,9 +81,9 @@
       var leftPosition = (mainPin.offsetLeft - shift.x) + 'px';
 
       var borderTop = mapProperties.border.TOP - mainPinProperties.HEIGHT - mainPinProperties.TAIL;
-      var borderRight = mapProperties.border.RIGHT - mainPinProperties.WIDTH;
+      var borderRight = mapProperties.border.RIGHT - mainPinProperties.WIDTH / 2;
       var borderBottom = mapProperties.border.BOTTOM - mainPinProperties.HEIGHT - mainPinProperties.TAIL;
-      var borderLeft = mapProperties.border.LEFT;
+      var borderLeft = mapProperties.border.LEFT - mainPinProperties.WIDTH / 2;
 
       if (mainPin.offsetTop - shift.y <= (borderTop)) {
         topPosition = (borderTop) + 'px';
@@ -118,12 +116,14 @@
 
   createMainPinPosition(mainPin.offsetTop, mainPin.offsetLeft);
 
-  window.resetPage = function () {
-    map.classList.add('map--faded');
-    window.pins.delete();
-    window.card.remove();
-    window.form.disable();
-    createMainPinPosition(mainPinProperties.position.X, mainPinProperties.position.Y);
-    resetMainPin();
+  window.map = {
+    resetPage: function () {
+      map.classList.add('map--faded');
+      window.pins.delete();
+      window.card.remove();
+      window.form.disable();
+      createMainPinPosition(mainPinProperties.position.X, mainPinProperties.position.Y);
+      resetMainPin();
+    }
   };
 })();

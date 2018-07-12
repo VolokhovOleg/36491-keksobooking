@@ -29,6 +29,26 @@
   };
   var submitBtn = mainForm.querySelector('.ad-form__submit');
   var resetBtn = mainForm.querySelector('.ad-form__reset');
+  var succesMessage = document.querySelector('.success');
+
+  var removeSuccesMessage = function () {
+    succesMessage.classList.add('hidden');
+    document.removeEventListener('keydown', onSuccesMessageEscPress);
+  };
+
+  var onSuccesMessageEscPress = function (evt) {
+    if (window.utils.isEscKeycode(evt.keyCode)) {
+      succesMessage.classList.add('hidden');
+      document.removeEventListener('keydown', onSuccesMessageEscPress);
+    }
+  };
+
+  var resetForm = function () {
+    window.map.resetPage();
+    succesMessage.classList.remove('hidden');
+    succesMessage.addEventListener('click', removeSuccesMessage);
+    document.addEventListener('keydown', onSuccesMessageEscPress);
+  };
 
   var checkValidation = function (input) {
     if (input.validity.tooShort) {
@@ -97,20 +117,28 @@
 
   roomAmount.addEventListener('change', setMatchRoom);
 
-  submitBtn.addEventListener('mouseup', function () {
+  submitBtn.addEventListener('click', function (evt) {
+    evt.preventDefault();
+    var formData = new FormData(mainForm);
     checkValidation(priceInput);
     checkValidation(titleInput);
+    if (mainForm.checkValidity()) {
+      window.backend.sendForm(window.backend.onError, resetForm, formData);
+    }
   });
 
   resetBtn.addEventListener('click', function () {
-    resetInputs();
-    window.resetPage();
-    mainForm.classList.add('ad-form--disabled');
     mainForm.reset();
+    resetInputs();
+    window.map.resetPage();
+    mainForm.classList.add('ad-form--disabled');
   });
 
   window.form = {
     disable: function () {
+      mainForm.reset();
+      mainForm.classList.add('ad-form--disabled');
+
       for (var i = 0; i < fieldsets.length; i++) {
         fieldsets[i].disabled = true;
       }
