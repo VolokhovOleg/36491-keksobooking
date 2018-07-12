@@ -37,7 +37,7 @@
   };
 
   var onSuccesMessageEscPress = function (evt) {
-    if (evt.keyCode === window.utils.ESC_KEYCODE) {
+    if (window.utils.isEscKeycode(evt.keyCode)) {
       succesMessage.classList.add('hidden');
       document.removeEventListener('keydown', onSuccesMessageEscPress);
     }

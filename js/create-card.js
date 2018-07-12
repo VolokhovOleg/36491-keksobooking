@@ -40,7 +40,7 @@
   };
 
   var onAdCardEscPress = function (evt) {
-    if (evt.keyCode === window.utils.ESC_KEYCODE) {
+    if (window.utils.isEscKeycode(evt.keyCode)) {
       removeAdCard();
       document.removeEventListener('keydown', onAdCardEscPress);
     }
