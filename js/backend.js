@@ -4,16 +4,16 @@
   var popupError = document.querySelector('.popup-error');
   var popupErrorMessage = popupError.querySelector('.popup-error__message');
   var errorMessage = {
-    'pageNotFound': 'Страница не найдена.',
-    'ServerError': 'Проблема с сервером.',
-    'unknownError': 'Ошибка, попробуйте позже.',
-    'timeout': 'Запрос выполняется слишком долго.',
-    'network': 'Потеряно подключение к интернету.'
+    'PAGE_NOT_FOUND': 'Страница не найдена.',
+    'SERVER_ERROR': 'Проблема с сервером.',
+    'UNKNOWN_ERROR': 'Ошибка, попробуйте позже.',
+    'TIMEOUT': 'Запрос выполняется слишком долго.',
+    'NETWORK': 'Потеряно подключение к интернету.'
   };
-  var tenSeconds = 10000;
+  var timeoutDuration = 10000;
   var url = {
-    'ADS_DATA': 'https://js.dump.academy/keksobooking/data',
-    'FORM': 'https://js.dump.academy/keksobooking'
+    'adsData': 'https://js.dump.academy/keksobooking/data',
+    'form': 'https://js.dump.academy/keksobooking'
   };
 
   var createRequest = function (onError, onLoad, request) {
@@ -22,25 +22,25 @@
         onLoad(request.response);
       },
       404: function () {
-        onError(errorMessage.pageNotFound);
+        onError(errorMessage.PAGE_NOT_FOUND);
       },
       500: function () {
-        onError(errorMessage.ServerError);
+        onError(errorMessage.SERVER_ERROR);
       },
       default: function () {
-        onError(errorMessage.unknownError);
+        onError(errorMessage.UNKNOWN_ERROR);
       }
     };
 
     request.responseType = 'json';
-    request.timeout = tenSeconds;
+    request.timeout = timeoutDuration;
 
     request.addEventListener('error', function () {
-      onError(errorMessage.network);
+      onError(errorMessage.NETWORK);
     });
 
     request.addEventListener('timeout', function () {
-      onError(errorMessage.timeout);
+      onError(errorMessage.TIMEOUT);
     });
 
     request.addEventListener('load', function () {
@@ -52,13 +52,13 @@
     dataLoad: function (onError, onLoad) {
       var xhr = new XMLHttpRequest();
       createRequest(onError, onLoad, xhr);
-      xhr.open('GET', url.ADS_DATA);
+      xhr.open('GET', url.adsData);
       xhr.send();
     },
     sendForm: function (onError, onLoad, data) {
       var xhr = new XMLHttpRequest();
       createRequest(onError, onLoad, xhr);
-      xhr.open('POST', url.FORM);
+      xhr.open('POST', url.form);
       xhr.send(data);
     },
     onError: function (error) {

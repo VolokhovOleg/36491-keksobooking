@@ -40,7 +40,7 @@
   };
 
   var onAdCardEscPress = function (evt) {
-    if (evt.keyCode === window.card.ESC_KEYCODE && activeCard !== null) {
+    if (evt.keyCode === window.utils.ESC_KEYCODE) {
       removeAdCard();
       document.removeEventListener('keydown', onAdCardEscPress);
     }
@@ -92,7 +92,6 @@
         activeCard.remove();
         document.removeEventListener('keydown', onAdCardEscPress);
       }
-    },
-    ESC_KEYCODE: 27
+    }
   };
 })();

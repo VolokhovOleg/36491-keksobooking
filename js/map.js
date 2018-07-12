@@ -33,7 +33,7 @@
   };
 
   var showAddressValue = function (x, y) {
-    addressInput.value = x + ', ' + y;
+    addressInput.value = y + ', ' + x;
   };
 
   var resetMainPin = function () {
@@ -81,9 +81,9 @@
       var leftPosition = (mainPin.offsetLeft - shift.x) + 'px';
 
       var borderTop = mapProperties.border.TOP - mainPinProperties.HEIGHT - mainPinProperties.TAIL;
-      var borderRight = mapProperties.border.RIGHT - mainPinProperties.WIDTH;
+      var borderRight = mapProperties.border.RIGHT - mainPinProperties.WIDTH / 2;
       var borderBottom = mapProperties.border.BOTTOM - mainPinProperties.HEIGHT - mainPinProperties.TAIL;
-      var borderLeft = mapProperties.border.LEFT;
+      var borderLeft = mapProperties.border.LEFT - mainPinProperties.WIDTH / 2;
 
       if (mainPin.offsetTop - shift.y <= (borderTop)) {
         topPosition = (borderTop) + 'px';
