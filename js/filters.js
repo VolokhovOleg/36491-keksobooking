@@ -35,38 +35,39 @@
 
   var filterAds = function () {
     var checkedElement = filterFeatures.querySelectorAll('input:checked');
+    var filtredArray = dataArray;
 
     window.card.remove();
     window.pins.delete();
 
-    dataArray = dataArray.filter(function (item) {
+    filtredArray = filtredArray.filter(function (item) {
       return checkValue(item.offer.type, filterType.value);
     });
 
-    dataArray = dataArray.filter(function (item) {
+    filtredArray = filtredArray.filter(function (item) {
       return checkPrice(item.offer.price, filterPrice.value);
     });
 
-    dataArray = dataArray.filter(function (item) {
+    filtredArray = filtredArray.filter(function (item) {
       return checkValue(item.offer.rooms, filterHouse.value);
     });
 
-    dataArray = dataArray.filter(function (item) {
+    filtredArray = filtredArray.filter(function (item) {
       return checkValue(item.offer.guests, filterGuests.value);
     });
 
-    dataArray = dataArray.filter(function (item) {
+    filtredArray = filtredArray.filter(function (item) {
       return Array.from(checkedElement).every(function (element) {
         return item.offer.features.includes(element.value);
       });
     });
 
-    window.map.createAds(dataArray);
+    window.map.createAds(filtredArray);
   };
 
   filterElements.forEach(function (item) {
     item.addEventListener('change', function () {
-      filterAds();
+      window.utils.debounce(filterAds);
     });
   });
 
