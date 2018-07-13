@@ -13,11 +13,11 @@
     isEscKeycode: function (keyCode) {
       return keyCode === ESC_KEYCODE;
     },
-    debounce: function (fun) {
+    debounce: function (cb) {
       if (lastTimeout) {
         clearTimeout(lastTimeout);
       }
-      lastTimeout = setTimeout(fun, DEBOUNCE_INTERVAL);
+      lastTimeout = setTimeout(cb, DEBOUNCE_INTERVAL);
     }
   };
 })();

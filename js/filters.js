@@ -1,15 +1,13 @@
 'use strict';
 (function () {
+  var ANY_VALUE = 'any';
   var dataArray = [];
   var filter = document.querySelector('.map__filters');
-  var filterElements = filter.querySelectorAll('.map__filter, .map__checkbox');
   var filterHouse = document.querySelector('#housing-rooms');
   var filterType = document.querySelector('#housing-type');
   var filterPrice = document.querySelector('#housing-price');
   var filterGuests = document.querySelector('#housing-guests');
   var filterFeatures = document.querySelector('#housing-features');
-  var maxPrice = document.querySelector('#price');
-  var anyValue = 'any';
   var priceValue = {
     'low': {
       MIN: 0,
@@ -21,16 +19,16 @@
     },
     'high': {
       MIN: 50001,
-      MAX: maxPrice.max
+      MAX: Infinity
     }
   };
 
   var checkValue = function (type, value) {
-    return anyValue === value || type.toString() === value;
+    return ANY_VALUE === value || type.toString() === value;
   };
 
   var checkPrice = function (type, value) {
-    return anyValue === value || type >= priceValue[value].MIN && type <= priceValue[value].MAX;
+    return ANY_VALUE === value || type >= priceValue[value].MIN && type <= priceValue[value].MAX;
   };
 
   var filterAds = function () {
@@ -65,10 +63,8 @@
     window.map.createAds(filtredArray);
   };
 
-  filterElements.forEach(function (item) {
-    item.addEventListener('change', function () {
-      window.utils.debounce(filterAds);
-    });
+  filter.addEventListener('change', function () {
+    window.utils.debounce(filterAds);
   });
 
   window.filters = {

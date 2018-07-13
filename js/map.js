@@ -129,11 +129,8 @@
       resetMainPin();
     },
     createAds: function (data) {
-      if (data.length > MAX_ADS_AMOUNT) {
-        data.length = MAX_ADS_AMOUNT;
-      }
 
-      for (var i = 0; i < data.length; i++) {
+      for (var i = 0; i < Math.min(MAX_ADS_AMOUNT, data.length); i++) {
         window.pins.render(data[i]);
       }
     }
