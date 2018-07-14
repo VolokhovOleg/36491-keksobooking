@@ -131,6 +131,7 @@
     mainForm.reset();
     resetInputs();
     window.map.resetPage();
+    window.filters.reset();
     mainForm.classList.add('ad-form--disabled');
   });
 

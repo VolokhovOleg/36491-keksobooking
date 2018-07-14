@@ -2,6 +2,8 @@
 
 (function () {
   var ESC_KEYCODE = 27;
+  var DEBOUNCE_INTERVAL = 500;
+  var lastTimeout;
 
   window.utils = {
     getPlurals: function (number, titles) {
@@ -10,6 +12,12 @@
     },
     isEscKeycode: function (keyCode) {
       return keyCode === ESC_KEYCODE;
+    },
+    debounce: function (cb) {
+      if (lastTimeout) {
+        clearTimeout(lastTimeout);
+      }
+      lastTimeout = setTimeout(cb, DEBOUNCE_INTERVAL);
     }
   };
 })();

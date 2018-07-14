@@ -58,6 +58,7 @@
     sendForm: function (onError, onLoad, data) {
       var xhr = new XMLHttpRequest();
       createRequest(onError, onLoad, xhr);
+      window.filters.reset();
       xhr.open('POST', Urls.FORM);
       xhr.send(data);
     },

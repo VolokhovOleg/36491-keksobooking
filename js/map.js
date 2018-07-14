@@ -1,6 +1,7 @@
 'use strict';
 
 (function () {
+  var MAX_ADS_AMOUNT = 5;
   var addressInput = document.querySelector('#address');
   var map = document.querySelector('.map');
   var mainPin = document.querySelector('.map__pin--main');
@@ -27,7 +28,9 @@
   };
 
   var createAds = function (data) {
-    for (var i = 0; i < data.length; i++) {
+    window.filters.copyData(data);
+
+    for (var i = 0; i < MAX_ADS_AMOUNT; i++) {
       window.pins.render(data[i]);
     }
   };
@@ -124,6 +127,12 @@
       window.form.disable();
       createMainPinPosition(mainPinProperties.position.X, mainPinProperties.position.Y);
       resetMainPin();
+    },
+    createAds: function (data) {
+
+      for (var i = 0; i < Math.min(MAX_ADS_AMOUNT, data.length); i++) {
+        window.pins.render(data[i]);
+      }
     }
   };
 })();
