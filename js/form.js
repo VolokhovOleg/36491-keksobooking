@@ -1,5 +1,71 @@
 'use strict';
+// Загрузка изображений в форму
 (function () {
+  var FILE_TYPES = ['jpg', 'jpeg', 'png'];
+  var pinFileChooser = document.querySelector('.ad-form-header__input');
+  var pinPreview = document.querySelector('.ad-form-header__preview img');
+  var photosFileChooser = document.querySelector('.ad-form__input');
+  var div = document.querySelector('.ad-form__photo');
+  var photoesContainer = document.querySelector('.ad-form__photo-container');
+  var addPinImage = function () {
+    var file = pinFileChooser.files[0];
+    var fileName = file.name.toLowerCase();
+
+    var matches = FILE_TYPES.some(function (it) {
+      return fileName.endsWith(it);
+    });
+
+    if (matches) {
+      var reader = new FileReader();
+
+      reader.addEventListener('load', function () {
+        pinPreview.src = reader.result;
+      });
+
+      reader.readAsDataURL(file);
+    }
+  };
+
+  var getImage = function () {
+    var tagName = document.createElement('img');
+    tagName.width = '40';
+    tagName.height = '44';
+    return tagName;
+  };
+
+  var addHousePhotos = function () {
+    for (var i = 0; i < photosFileChooser.files.length; i++) {
+      var file = photosFileChooser.files[i];
+      var fileName = photosFileChooser.files[i].name;
+      var matches = FILE_TYPES.some(function (it) {
+        return fileName.endsWith(it);
+      });
+
+      if (matches) {
+
+        var reader = new FileReader();
+        reader.addEventListener('load', function () {
+          var newDiv = div.cloneNode(false);
+          div.remove();
+          photoesContainer.appendChild(newDiv);
+          var newImgTag = getImage();
+          newDiv.appendChild(newImgTag);
+
+          newImgTag.src = reader.result;
+        }, false);
+        reader.readAsDataURL(file);
+      }
+    }
+  };
+
+  pinFileChooser.addEventListener('change', function () {
+    addPinImage();
+  });
+
+  photosFileChooser.addEventListener('change', function () {
+    addHousePhotos();
+  });
+
   var mainForm = document.querySelector('.ad-form');
   var fieldsets = mainForm.querySelectorAll('fieldset');
   var inputs = mainForm.querySelectorAll('input');
