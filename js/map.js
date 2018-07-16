@@ -31,7 +31,7 @@
     window.filters.copyData(data);
 
     for (var i = 0; i < MAX_ADS_AMOUNT; i++) {
-      window.pins.render(data[i]);
+      window.pin.render(data[i]);
     }
   };
 
@@ -53,7 +53,6 @@
 
   var activatePage = function () {
     window.backend.dataLoad(window.backend.onError, createAds);
-    window.form.activate();
     createMainPinPosition(mainPinProperties.position.X, mainPinProperties.position.Y);
   };
 
@@ -121,7 +120,7 @@
   window.map = {
     resetPage: function () {
       map.classList.add('map--faded');
-      window.pins.delete();
+      window.pin.delete();
       window.card.remove();
       window.form.disable();
       createMainPinPosition(mainPinProperties.position.X, mainPinProperties.position.Y);
@@ -130,7 +129,7 @@
     createAds: function (data) {
 
       for (var i = 0; i < Math.min(MAX_ADS_AMOUNT, data.length); i++) {
-        window.pins.render(data[i]);
+        window.pin.render(data[i]);
       }
     }
   };

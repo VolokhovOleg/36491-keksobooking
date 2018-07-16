@@ -2,10 +2,11 @@
 
 (function () {
   var DEFAULT_IMAGE_SRC = 'img/muffin-grey.svg';
+  var DEFAULT_PRICE_PLACEHOLDER = '1000';
   var mainForm = document.querySelector('.ad-form');
   var fieldsets = mainForm.querySelectorAll('fieldset');
   var inputs = mainForm.querySelectorAll('input');
-  var inputStyle = {
+  var InputStyle = {
     'INVALID': 'border-color: rgba(255, 0, 0, 1);',
     'VALID': 'border: 1px solid rgba(217, 217, 217, 1);'
   };
@@ -17,7 +18,6 @@
   };
   var titleInput = mainForm.querySelector('#title');
   var priceInput = mainForm.querySelector('#price');
-  var defaultPricePlaceholder = '1000';
   var houseType = mainForm.querySelector('#type');
   var timeinSelect = mainForm.querySelector('#timein');
   var timeoutSelect = mainForm.querySelector('#timeout');
@@ -35,17 +35,17 @@
   var pinFileChooser = document.querySelector('.ad-form-header__input');
   var pinPreview = document.querySelector('.ad-form-header__preview img');
   var photosFileChooser = document.querySelector('.ad-form__input');
-  var photoPreview = document.querySelectorAll('.ad-form__photo');
+  var photoPreview = document.querySelector('.ad-form__photo');
   var photoesContainer = document.querySelector('.ad-form__photo-container');
-  var previewImageParameters = {
+  var PreviewImageParameters = {
     HEIGHT: 44,
     WIDTH: 40
   };
 
   var disableForm = function () {
-    for (var i = 0; i < fieldsets.length; i++) {
-      fieldsets[i].disabled = true;
-    }
+    fieldsets.forEach(function (element) {
+      element.disabled = true;
+    });
   };
 
   var removeSuccesMessage = function () {
@@ -69,10 +69,10 @@
 
   var checkValidation = function (input) {
     if (!input.validity.valid) {
-      input.style = inputStyle.INVALID;
+      input.style = InputStyle.INVALID;
     } else {
       input.setCustomValidity('');
-      input.style = inputStyle.VALID;
+      input.style = InputStyle.VALID;
     }
   };
 
@@ -93,11 +93,10 @@
   };
 
   var resetInputs = function () {
-    priceInput.placeholder = defaultPricePlaceholder;
-
-    for (var i = 0; i < inputs.length; i++) {
-      inputs[i].style = inputStyle.VALID;
-    }
+    priceInput.placeholder = DEFAULT_PRICE_PLACEHOLDER;
+    inputs.forEach(function (element) {
+      element.style = InputStyle.VALID;
+    });
   };
 
   disableForm();
@@ -115,7 +114,7 @@
     priceInput.placeholder = offerTypesPrice[houseType.value];
     priceInput.min = offerTypesPrice[houseType.value];
     if (priceInput.min < priceInput.value || priceInput.max < priceInput.value) {
-      priceInput.style = inputStyle.INVALID;
+      priceInput.style = InputStyle.INVALID;
     }
   });
 
@@ -149,9 +148,8 @@
 
   var getImage = function () {
     var tagName = document.createElement('img');
-    tagName.width = previewImageParameters.WIDTH;
-    tagName.height = previewImageParameters.HEIGHT;
-    tagName.src = '';
+    tagName.width = PreviewImageParameters.WIDTH;
+    tagName.height = PreviewImageParameters.HEIGHT;
     return tagName;
   };
 
@@ -159,18 +157,19 @@
 
     for (var i = 0; i < fileChooser.files.length; i++) {
       var file = fileChooser.files[i];
-
       var reader = new FileReader();
-      reader.addEventListener('load', function () {
+
+      reader.addEventListener('load', function (evt) {
         if (createElement) {
-          var newPhotoWrap = photoPreview[0].cloneNode();
-          photoPreview[0].remove();
+          reader = evt.target;
+          console.log(reader);
+          var newPhotoWrap = photoPreview.cloneNode();
+          photoPreview.remove();
           photoesContainer.appendChild(newPhotoWrap);
           filePreview = getImage();
+          filePreview.src = reader.result;
           newPhotoWrap.appendChild(filePreview);
         }
-
-        filePreview.src = reader.result;
       });
 
       reader.readAsDataURL(file);

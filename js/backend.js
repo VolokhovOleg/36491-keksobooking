@@ -4,9 +4,9 @@
   var map = document.querySelector('.map');
   var popupError = document.querySelector('.popup-error');
   var popupErrorMessage = popupError.querySelector('.popup-error__message');
-  var duration = {
+  var Duration = {
     TIMEOUT: 10000,
-    ERROR_MESSAGE: 3000
+    MESSAGE_TIME_LIVE: 3000
   };
   var ErrorMessages = {
     'PAGE_NOT_FOUND': 'Страница не найдена.',
@@ -25,6 +25,7 @@
       200: function () {
         onLoad(request.response);
         map.classList.remove('map--faded');
+        window.form.activate();
       },
       404: function () {
         onError(ErrorMessages.PAGE_NOT_FOUND);
@@ -38,7 +39,7 @@
     };
 
     request.responseType = 'json';
-    request.timeout = duration.TIMEOUT;
+    request.timeout = Duration.TIMEOUT;
 
     request.addEventListener('error', function () {
       onError(ErrorMessages.NETWORK);
@@ -72,7 +73,7 @@
       popupError.hidden = false;
       setTimeout(function () {
         popupError.hidden = true;
-      }, duration.ERROR_MESSAGE);
+      }, Duration.ERROR_MESSAGE_TIMELIVE);
     }
   };
 })();

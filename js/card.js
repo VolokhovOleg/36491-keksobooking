@@ -6,7 +6,7 @@
   var container = document.querySelector('.map__filters-container');
   var map = document.querySelector('.map');
   var activeCard = map.querySelector('.map__card');
-  var housePhoto = {
+  var HousePhoto = {
     WIDTH: 45,
     HEIGHT: 45
   };
@@ -25,8 +25,8 @@
     getPhoto: function () {
       var tagName = document.createElement('img');
       tagName.classList.add('popup__photo');
-      tagName.width = housePhoto.WIDTH;
-      tagName.height = housePhoto.HEIGHT;
+      tagName.width = HousePhoto.WIDTH;
+      tagName.height = HousePhoto.HEIGHT;
       tagName.alt = 'Фотография жилья';
       return tagName;
     }

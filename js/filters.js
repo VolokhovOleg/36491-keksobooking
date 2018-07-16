@@ -37,7 +37,7 @@
     var filtredArray = dataArray;
 
     window.card.remove();
-    window.pins.delete();
+    window.pin.delete();
 
     filtredArray = filtredArray.filter(function (item) {
       return checkValue(item.offer.type, filterType.value);
