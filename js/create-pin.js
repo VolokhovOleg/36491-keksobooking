@@ -10,6 +10,12 @@
   var mapPinsBlock = document.querySelector('.map__pins');
   var mapPin = mainTemplate.content.querySelector('.map__pin');
 
+  var removeActivePinClass = function () {
+    pinsArray.forEach(function (element) {
+      element.classList.remove('map__pin--active');
+    });
+  };
+
   window.pins = {
     render: function (array) {
       var pinElement = mapPin.cloneNode(true);
@@ -26,6 +32,8 @@
 
       pinElement.addEventListener('click', function () {
         window.card.render(array);
+        removeActivePinClass();
+        pinElement.classList.add('map__pin--active');
       });
 
       pinsArray.push(pinElement);
@@ -33,9 +41,9 @@
       mapPinsBlock.appendChild(pinElement);
     },
     delete: function () {
-      for (var i = 0; i < pinsArray.length; i++) {
-        pinsArray[i].remove();
-      }
+      pinsArray.forEach(function (item) {
+        item.remove();
+      });
       pinsArray = [];
     }
   };

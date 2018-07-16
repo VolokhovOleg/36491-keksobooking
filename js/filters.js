@@ -1,4 +1,5 @@
 'use strict';
+
 (function () {
   var ANY_VALUE = 'any';
   var dataArray = [];
@@ -32,7 +33,7 @@
   };
 
   var filterAds = function () {
-    var checkedElement = filterFeatures.querySelectorAll('input:checked');
+    var checkedElements = filterFeatures.querySelectorAll('input:checked');
     var filtredArray = dataArray;
 
     window.card.remove();
@@ -55,7 +56,7 @@
     });
 
     filtredArray = filtredArray.filter(function (item) {
-      return Array.from(checkedElement).every(function (element) {
+      return Array.from(checkedElements).every(function (element) {
         return item.offer.features.includes(element.value);
       });
     });

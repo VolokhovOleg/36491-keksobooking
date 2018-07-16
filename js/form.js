@@ -1,71 +1,7 @@
 'use strict';
-// Загрузка изображений в форму
+
 (function () {
-  var FILE_TYPES = ['jpg', 'jpeg', 'png'];
-  var pinFileChooser = document.querySelector('.ad-form-header__input');
-  var pinPreview = document.querySelector('.ad-form-header__preview img');
-  var photosFileChooser = document.querySelector('.ad-form__input');
-  var div = document.querySelector('.ad-form__photo');
-  var photoesContainer = document.querySelector('.ad-form__photo-container');
-  var addPinImage = function () {
-    var file = pinFileChooser.files[0];
-    var fileName = file.name.toLowerCase();
-
-    var matches = FILE_TYPES.some(function (it) {
-      return fileName.endsWith(it);
-    });
-
-    if (matches) {
-      var reader = new FileReader();
-
-      reader.addEventListener('load', function () {
-        pinPreview.src = reader.result;
-      });
-
-      reader.readAsDataURL(file);
-    }
-  };
-
-  var getImage = function () {
-    var tagName = document.createElement('img');
-    tagName.width = '40';
-    tagName.height = '44';
-    return tagName;
-  };
-
-  var addHousePhotos = function () {
-    for (var i = 0; i < photosFileChooser.files.length; i++) {
-      var file = photosFileChooser.files[i];
-      var fileName = photosFileChooser.files[i].name;
-      var matches = FILE_TYPES.some(function (it) {
-        return fileName.endsWith(it);
-      });
-
-      if (matches) {
-
-        var reader = new FileReader();
-        reader.addEventListener('load', function () {
-          var newDiv = div.cloneNode(false);
-          div.remove();
-          photoesContainer.appendChild(newDiv);
-          var newImgTag = getImage();
-          newDiv.appendChild(newImgTag);
-
-          newImgTag.src = reader.result;
-        }, false);
-        reader.readAsDataURL(file);
-      }
-    }
-  };
-
-  pinFileChooser.addEventListener('change', function () {
-    addPinImage();
-  });
-
-  photosFileChooser.addEventListener('change', function () {
-    addHousePhotos();
-  });
-
+  var DEFAULT_IMAGE_SRC = 'img/muffin-grey.svg';
   var mainForm = document.querySelector('.ad-form');
   var fieldsets = mainForm.querySelectorAll('fieldset');
   var inputs = mainForm.querySelectorAll('input');
@@ -96,6 +32,21 @@
   var submitBtn = mainForm.querySelector('.ad-form__submit');
   var resetBtn = mainForm.querySelector('.ad-form__reset');
   var succesMessage = document.querySelector('.success');
+  var pinFileChooser = document.querySelector('.ad-form-header__input');
+  var pinPreview = document.querySelector('.ad-form-header__preview img');
+  var photosFileChooser = document.querySelector('.ad-form__input');
+  var photoPreview = document.querySelectorAll('.ad-form__photo');
+  var photoesContainer = document.querySelector('.ad-form__photo-container');
+  var previewImageParameters = {
+    HEIGHT: 44,
+    WIDTH: 40
+  };
+
+  var disableForm = function () {
+    for (var i = 0; i < fieldsets.length; i++) {
+      fieldsets[i].disabled = true;
+    }
+  };
 
   var removeSuccesMessage = function () {
     succesMessage.classList.add('hidden');
@@ -117,13 +68,7 @@
   };
 
   var checkValidation = function (input) {
-    if (input.validity.tooShort) {
-      input.style = inputStyle.INVALID;
-    } else if (input.validity.valueMissing) {
-      input.style = inputStyle.INVALID;
-    } else if (priceInput.validity.rangeOverflow) {
-      input.style = inputStyle.INVALID;
-    } else if (priceInput.validity.rangeUnderflow) {
+    if (!input.validity.valid) {
       input.style = inputStyle.INVALID;
     } else {
       input.setCustomValidity('');
@@ -155,6 +100,7 @@
     }
   };
 
+  disableForm();
   setMatchRoom();
 
   titleInput.addEventListener('change', function () {
@@ -201,19 +147,57 @@
     mainForm.classList.add('ad-form--disabled');
   });
 
+  var getImage = function () {
+    var tagName = document.createElement('img');
+    tagName.width = previewImageParameters.WIDTH;
+    tagName.height = previewImageParameters.HEIGHT;
+    tagName.src = '';
+    return tagName;
+  };
+
+  var addImg = function (fileChooser, filePreview, createElement) {
+
+    for (var i = 0; i < fileChooser.files.length; i++) {
+      var file = fileChooser.files[i];
+
+      var reader = new FileReader();
+      reader.addEventListener('load', function () {
+        if (createElement) {
+          var newPhotoWrap = photoPreview[0].cloneNode();
+          photoPreview[0].remove();
+          photoesContainer.appendChild(newPhotoWrap);
+          filePreview = getImage();
+          newPhotoWrap.appendChild(filePreview);
+        }
+
+        filePreview.src = reader.result;
+      });
+
+      reader.readAsDataURL(file);
+    }
+  };
+
+  pinFileChooser.addEventListener('change', function () {
+    addImg(pinFileChooser, pinPreview);
+  });
+
+  photosFileChooser.addEventListener('change', function () {
+    addImg(photosFileChooser, photoPreview, true);
+  });
+
   window.form = {
     disable: function () {
       mainForm.reset();
       mainForm.classList.add('ad-form--disabled');
-
-      for (var i = 0; i < fieldsets.length; i++) {
-        fieldsets[i].disabled = true;
-      }
+      pinPreview.src = DEFAULT_IMAGE_SRC;
+      fieldsets.forEach(function (element) {
+        element.disabled = true;
+      });
     },
     activate: function () {
-      for (var i = 0; i < fieldsets.length; i++) {
-        fieldsets[i].disabled = false;
-      }
+      fieldsets.forEach(function (element) {
+        element.disabled = false;
+      });
       mainForm.classList.remove('ad-form--disabled');
     }
   };

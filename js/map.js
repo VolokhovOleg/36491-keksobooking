@@ -52,7 +52,6 @@
   };
 
   var activatePage = function () {
-    map.classList.remove('map--faded');
     window.backend.dataLoad(window.backend.onError, createAds);
     window.form.activate();
     createMainPinPosition(mainPinProperties.position.X, mainPinProperties.position.Y);

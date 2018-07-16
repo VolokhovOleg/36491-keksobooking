@@ -1,9 +1,13 @@
 'use strict';
 
 (function () {
-  var TIMEOUT_DURATION = 10000;
+  var map = document.querySelector('.map');
   var popupError = document.querySelector('.popup-error');
   var popupErrorMessage = popupError.querySelector('.popup-error__message');
+  var duration = {
+    TIMEOUT: 10000,
+    ERROR_MESSAGE: 3000
+  };
   var ErrorMessages = {
     'PAGE_NOT_FOUND': 'Страница не найдена.',
     'SERVER_ERROR': 'Проблема с сервером.',
@@ -20,6 +24,7 @@
     var RequestStatus = {
       200: function () {
         onLoad(request.response);
+        map.classList.remove('map--faded');
       },
       404: function () {
         onError(ErrorMessages.PAGE_NOT_FOUND);
@@ -33,7 +38,7 @@
     };
 
     request.responseType = 'json';
-    request.timeout = TIMEOUT_DURATION;
+    request.timeout = duration.TIMEOUT;
 
     request.addEventListener('error', function () {
       onError(ErrorMessages.NETWORK);
@@ -65,6 +70,9 @@
     onError: function (error) {
       popupErrorMessage.textContent = error;
       popupError.hidden = false;
+      setTimeout(function () {
+        popupError.hidden = true;
+      }, duration.ERROR_MESSAGE);
     }
   };
 })();
