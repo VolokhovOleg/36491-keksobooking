@@ -150,9 +150,9 @@
   var removePhotos = function () {
     var photos = document.querySelectorAll('.ad-form__photo');
 
-    for (var i = 0; i < photos.length; i++) {
-      photos[i].remove();
-    }
+    photos.forEach(function (item) {
+      item.remove();
+    });
   };
 
   var getImage = function () {
@@ -172,7 +172,6 @@
         reader = evt.target;
 
         if (createElement) {
-
           var housePhoto = getImage();
           housePhoto.src = reader.result;
           var newPhotoPreview = filePreview.cloneNode();
@@ -181,6 +180,7 @@
         } else {
           filePreview.src = reader.result;
         }
+
       });
       reader.readAsDataURL(file);
     }
