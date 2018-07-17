@@ -2,6 +2,7 @@
 
 (function () {
   var DEFAULT_IMAGE_SRC = 'img/muffin-grey.svg';
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
   var DEFAULT_PRICE_PLACEHOLDER = '1000';
   var mainForm = document.querySelector('.ad-form');
   var fieldsets = mainForm.querySelectorAll('fieldset');
@@ -41,6 +42,7 @@
     HEIGHT: 44,
     WIDTH: 40
   };
+  var errorMessage = 'Доступные форматы изображений ' + FILE_TYPES;
 
   var disableForm = function () {
     fieldsets.forEach(function (element) {
@@ -157,6 +159,7 @@
 
   var getImage = function () {
     var tagName = document.createElement('img');
+
     tagName.width = PreviewImageParameters.WIDTH;
     tagName.height = PreviewImageParameters.HEIGHT;
     return tagName;
@@ -166,21 +169,31 @@
 
     for (var i = 0; i < fileChooser.files.length; i++) {
       var file = fileChooser.files[i];
-      var reader = new FileReader();
+      var fileName = file.name.toLowerCase();
 
-      reader.addEventListener('load', function (evt) {
-        reader = evt.target;
-        if (createElement) {
-          var housePhoto = getImage();
-          housePhoto.src = reader.result;
-          var newPhotoPreview = filePreview.cloneNode();
-          photoesContainer.appendChild(newPhotoPreview);
-          newPhotoPreview.appendChild(housePhoto);
-        } else {
-          filePreview.src = reader.result;
-        }
+      var matches = FILE_TYPES.some(function (it) {
+        return fileName.endsWith(it);
       });
-      reader.readAsDataURL(file);
+
+      if (matches) {
+        var reader = new FileReader();
+
+        reader.addEventListener('load', function (evt) {
+          reader = evt.target;
+          if (createElement) {
+            var housePhoto = getImage();
+            housePhoto.src = reader.result;
+            var newPhotoPreview = filePreview.cloneNode();
+            photoesContainer.appendChild(newPhotoPreview);
+            newPhotoPreview.appendChild(housePhoto);
+          } else {
+            filePreview.src = reader.result;
+          }
+        });
+        reader.readAsDataURL(file);
+      } else {
+        window.utils.renderError(errorMessage);
+      }
     }
   };
 

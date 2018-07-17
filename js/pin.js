@@ -45,6 +45,11 @@
         item.remove();
       });
       pinsArray = [];
+    },
+    removeActiveClass: function () {
+      pinsArray.forEach(function (element) {
+        element.classList.remove('map__pin--active');
+      });
     }
   };
 })();

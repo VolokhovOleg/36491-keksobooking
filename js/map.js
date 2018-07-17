@@ -83,11 +83,10 @@
       var topPosition = (mainPin.offsetTop - shift.y) + 'px';
       var leftPosition = (mainPin.offsetLeft - shift.x) + 'px';
 
-      var borderTop = mapProperties.border.TOP - mainPinProperties.HEIGHT - mainPinProperties.TAIL;
-      var borderRight = mapProperties.border.RIGHT - mainPinProperties.WIDTH / 2;
-      var borderBottom = mapProperties.border.BOTTOM - mainPinProperties.HEIGHT - mainPinProperties.TAIL;
-      var borderLeft = mapProperties.border.LEFT - mainPinProperties.WIDTH / 2;
-
+      var borderTop = Math.floor(mapProperties.border.TOP - mainPinProperties.HEIGHT - mainPinProperties.TAIL);
+      var borderRight = Math.floor(mapProperties.border.RIGHT - mainPinProperties.WIDTH / 2);
+      var borderBottom = Math.floor(mapProperties.border.BOTTOM - mainPinProperties.HEIGHT - mainPinProperties.TAIL);
+      var borderLeft = Math.floor(mapProperties.border.LEFT - mainPinProperties.WIDTH / 2);
       if (mainPin.offsetTop - shift.y <= (borderTop)) {
         topPosition = (borderTop) + 'px';
       } else if (mainPin.offsetTop - shift.y >= (borderBottom)) {
@@ -102,7 +101,7 @@
 
       mainPin.style.top = topPosition;
       mainPin.style.left = leftPosition;
-
+      console.log(topPosition, leftPosition);
       createMainPinPosition(mainPin.offsetTop, mainPin.offsetLeft);
     };
 

@@ -3,6 +3,9 @@
 (function () {
   var ESC_KEYCODE = 27;
   var DEBOUNCE_INTERVAL = 500;
+  var MESSAGE_TIME_LIVE = 3000;
+  var popupError = document.querySelector('.popup-error');
+  var popupErrorMessage = popupError.querySelector('.popup-error__message');
   var lastTimeout;
 
   window.utils = {
@@ -18,6 +21,13 @@
         clearTimeout(lastTimeout);
       }
       lastTimeout = setTimeout(cb, DEBOUNCE_INTERVAL);
+    },
+    renderError: function (error) {
+      popupErrorMessage.textContent = error;
+      popupError.hidden = false;
+      setTimeout(function () {
+        popupError.hidden = true;
+      }, MESSAGE_TIME_LIVE);
     }
   };
 })();
