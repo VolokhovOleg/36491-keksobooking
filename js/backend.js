@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-  var map = document.querySelector('.map');
   var popupError = document.querySelector('.popup-error');
   var popupErrorMessage = popupError.querySelector('.popup-error__message');
   var Duration = {
