@@ -170,7 +170,6 @@
 
       reader.addEventListener('load', function (evt) {
         reader = evt.target;
-
         if (createElement) {
           var housePhoto = getImage();
           housePhoto.src = reader.result;
@@ -180,7 +179,6 @@
         } else {
           filePreview.src = reader.result;
         }
-
       });
       reader.readAsDataURL(file);
     }
