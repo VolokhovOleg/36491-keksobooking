@@ -54,6 +54,8 @@
   var activatePage = function () {
     window.backend.dataLoad(window.backend.onError, createAds);
     createMainPinPosition(mainPinProperties.position.X, mainPinProperties.position.Y);
+    map.classList.remove('map--faded');
+    window.form.activate();
   };
 
   mainPin.addEventListener('mousedown', function (evt) {

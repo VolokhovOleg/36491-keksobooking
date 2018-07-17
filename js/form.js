@@ -100,6 +100,7 @@
   };
 
   disableForm();
+
   setMatchRoom();
 
   titleInput.addEventListener('change', function () {
@@ -146,6 +147,14 @@
     mainForm.classList.add('ad-form--disabled');
   });
 
+  var removePhotos = function () {
+    var photos = document.querySelectorAll('.ad-form__photo');
+
+    for (var i = 0; i < photos.length; i++) {
+      photos[i].remove();
+    }
+  };
+
   var getImage = function () {
     var tagName = document.createElement('img');
     tagName.width = PreviewImageParameters.WIDTH;
@@ -160,18 +169,19 @@
       var reader = new FileReader();
 
       reader.addEventListener('load', function (evt) {
+        reader = evt.target;
+
         if (createElement) {
-          reader = evt.target;
-          console.log(reader);
-          var newPhotoWrap = photoPreview.cloneNode();
-          photoPreview.remove();
-          photoesContainer.appendChild(newPhotoWrap);
-          filePreview = getImage();
+
+          var housePhoto = getImage();
+          housePhoto.src = reader.result;
+          var newPhotoPreview = filePreview.cloneNode();
+          photoesContainer.appendChild(newPhotoPreview);
+          newPhotoPreview.appendChild(housePhoto);
+        } else {
           filePreview.src = reader.result;
-          newPhotoWrap.appendChild(filePreview);
         }
       });
-
       reader.readAsDataURL(file);
     }
   };
@@ -181,6 +191,7 @@
   });
 
   photosFileChooser.addEventListener('change', function () {
+    removePhotos();
     addImg(photosFileChooser, photoPreview, true);
   });
 
@@ -192,6 +203,8 @@
       fieldsets.forEach(function (element) {
         element.disabled = true;
       });
+      removePhotos();
+      photoesContainer.appendChild(photoPreview);
     },
     activate: function () {
       fieldsets.forEach(function (element) {

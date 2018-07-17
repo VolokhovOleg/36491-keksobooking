@@ -24,8 +24,6 @@
     var RequestStatus = {
       200: function () {
         onLoad(request.response);
-        map.classList.remove('map--faded');
-        window.form.activate();
       },
       404: function () {
         onError(ErrorMessages.PAGE_NOT_FOUND);
