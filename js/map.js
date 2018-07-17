@@ -101,7 +101,6 @@
 
       mainPin.style.top = topPosition;
       mainPin.style.left = leftPosition;
-      console.log(topPosition, leftPosition);
       createMainPinPosition(mainPin.offsetTop, mainPin.offsetLeft);
     };
 
