@@ -41,21 +41,13 @@
 
     filtredArray = filtredArray.filter(function (item) {
       return checkValue(item.offer.type, filterType.value);
-    });
-
-    filtredArray = filtredArray.filter(function (item) {
+    }).filter(function (item) {
       return checkPrice(item.offer.price, filterPrice.value);
-    });
-
-    filtredArray = filtredArray.filter(function (item) {
+    }).filter(function (item) {
       return checkValue(item.offer.rooms, filterHouse.value);
-    });
-
-    filtredArray = filtredArray.filter(function (item) {
+    }).filter(function (item) {
       return checkValue(item.offer.guests, filterGuests.value);
-    });
-
-    filtredArray = filtredArray.filter(function (item) {
+    }).filter(function (item) {
       return Array.from(checkedElements).every(function (element) {
         return item.offer.features.includes(element.value);
       });
