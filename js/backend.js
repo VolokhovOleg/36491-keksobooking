@@ -1,9 +1,7 @@
 'use strict';
 
 (function () {
-  var TIMEOUT_DURATION = 10000;
-  var popupError = document.querySelector('.popup-error');
-  var popupErrorMessage = popupError.querySelector('.popup-error__message');
+  var TIMEOUT = 10000;
   var ErrorMessages = {
     'PAGE_NOT_FOUND': 'Страница не найдена.',
     'SERVER_ERROR': 'Проблема с сервером.',
@@ -33,7 +31,7 @@
     };
 
     request.responseType = 'json';
-    request.timeout = TIMEOUT_DURATION;
+    request.timeout = TIMEOUT;
 
     request.addEventListener('error', function () {
       onError(ErrorMessages.NETWORK);
@@ -63,8 +61,7 @@
       xhr.send(data);
     },
     onError: function (error) {
-      popupErrorMessage.textContent = error;
-      popupError.hidden = false;
+      window.utils.renderError(error);
     }
   };
 })();

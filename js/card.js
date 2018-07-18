@@ -6,7 +6,7 @@
   var container = document.querySelector('.map__filters-container');
   var map = document.querySelector('.map');
   var activeCard = map.querySelector('.map__card');
-  var housePhoto = {
+  var HousePhoto = {
     WIDTH: 45,
     HEIGHT: 45
   };
@@ -16,25 +16,26 @@
     'house': 'Дом',
     'palace': 'Дворец'
   };
-  var getElement = {
-    feature: function (arr) {
-      var tagName = document.createElement('li');
-      tagName.classList.add('popup__feature', 'popup__feature--' + arr);
-      return tagName;
-    },
-    photo: function () {
-      var tagName = document.createElement('img');
-      tagName.classList.add('popup__photo');
-      tagName.width = housePhoto.WIDTH;
-      tagName.height = housePhoto.HEIGHT;
-      tagName.alt = 'Фотография жилья';
-      return tagName;
-    }
+
+  var getFeature = function (arr) {
+    var tagName = document.createElement('li');
+    tagName.classList.add('popup__feature', 'popup__feature--' + arr);
+    return tagName;
+  };
+
+  var getPhoto = function () {
+    var tagName = document.createElement('img');
+    tagName.classList.add('popup__photo');
+    tagName.width = HousePhoto.WIDTH;
+    tagName.height = HousePhoto.HEIGHT;
+    tagName.alt = 'Фотография жилья';
+    return tagName;
   };
 
   var removeAdCard = function () {
     if (activeCard) {
       activeCard.remove();
+      window.pin.removeActiveClass();
       document.removeEventListener('keydown', onAdCardEscPress);
     }
   };
@@ -65,13 +66,13 @@
     adElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + card.offer.checkin + ', выезд до ' + card.offer.checkout;
 
     for (var featureIndex = 0; featureIndex < card.offer.features.length; featureIndex++) {
-      adElement.querySelector('.popup__features').appendChild(getElement.feature(card.offer.features[featureIndex]));
+      adElement.querySelector('.popup__features').appendChild(getFeature(card.offer.features[featureIndex]));
     }
 
     adElement.querySelector('.popup__description').textContent = card.offer.description;
 
     for (var photoIndex = 0; photoIndex < card.offer.photos.length; photoIndex++) {
-      adElement.querySelector('.popup__photos').appendChild(getElement.photo(card.offer.photos[photoIndex])).src = card.offer.photos[photoIndex];
+      adElement.querySelector('.popup__photos').appendChild(getPhoto(card.offer.photos[photoIndex])).src = card.offer.photos[photoIndex];
     }
 
     closeAdBtn.addEventListener('click', removeAdCard);

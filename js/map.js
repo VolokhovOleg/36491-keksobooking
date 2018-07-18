@@ -31,7 +31,7 @@
     window.filters.copyData(data);
 
     for (var i = 0; i < MAX_ADS_AMOUNT; i++) {
-      window.pins.render(data[i]);
+      window.pin.render(data[i]);
     }
   };
 
@@ -52,10 +52,10 @@
   };
 
   var activatePage = function () {
-    map.classList.remove('map--faded');
     window.backend.dataLoad(window.backend.onError, createAds);
-    window.form.activate();
     createMainPinPosition(mainPinProperties.position.X, mainPinProperties.position.Y);
+    map.classList.remove('map--faded');
+    window.form.activate();
   };
 
   mainPin.addEventListener('mousedown', function (evt) {
@@ -83,11 +83,10 @@
       var topPosition = (mainPin.offsetTop - shift.y) + 'px';
       var leftPosition = (mainPin.offsetLeft - shift.x) + 'px';
 
-      var borderTop = mapProperties.border.TOP - mainPinProperties.HEIGHT - mainPinProperties.TAIL;
-      var borderRight = mapProperties.border.RIGHT - mainPinProperties.WIDTH / 2;
-      var borderBottom = mapProperties.border.BOTTOM - mainPinProperties.HEIGHT - mainPinProperties.TAIL;
-      var borderLeft = mapProperties.border.LEFT - mainPinProperties.WIDTH / 2;
-
+      var borderTop = Math.floor(mapProperties.border.TOP - mainPinProperties.HEIGHT - mainPinProperties.TAIL);
+      var borderRight = Math.floor(mapProperties.border.RIGHT - mainPinProperties.WIDTH / 2);
+      var borderBottom = Math.floor(mapProperties.border.BOTTOM - mainPinProperties.HEIGHT - mainPinProperties.TAIL);
+      var borderLeft = Math.floor(mapProperties.border.LEFT - mainPinProperties.WIDTH / 2);
       if (mainPin.offsetTop - shift.y <= (borderTop)) {
         topPosition = (borderTop) + 'px';
       } else if (mainPin.offsetTop - shift.y >= (borderBottom)) {
@@ -102,7 +101,6 @@
 
       mainPin.style.top = topPosition;
       mainPin.style.left = leftPosition;
-
       createMainPinPosition(mainPin.offsetTop, mainPin.offsetLeft);
     };
 
@@ -122,7 +120,7 @@
   window.map = {
     resetPage: function () {
       map.classList.add('map--faded');
-      window.pins.delete();
+      window.pin.delete();
       window.card.remove();
       window.form.disable();
       createMainPinPosition(mainPinProperties.position.X, mainPinProperties.position.Y);
@@ -131,7 +129,7 @@
     createAds: function (data) {
 
       for (var i = 0; i < Math.min(MAX_ADS_AMOUNT, data.length); i++) {
-        window.pins.render(data[i]);
+        window.pin.render(data[i]);
       }
     }
   };

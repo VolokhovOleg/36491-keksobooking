@@ -1,9 +1,13 @@
 'use strict';
+
 (function () {
+  var DEFAULT_IMAGE_SRC = 'img/muffin-grey.svg';
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+  var DEFAULT_PRICE_PLACEHOLDER = '1000';
   var mainForm = document.querySelector('.ad-form');
   var fieldsets = mainForm.querySelectorAll('fieldset');
   var inputs = mainForm.querySelectorAll('input');
-  var inputStyle = {
+  var InputStyle = {
     'INVALID': 'border-color: rgba(255, 0, 0, 1);',
     'VALID': 'border: 1px solid rgba(217, 217, 217, 1);'
   };
@@ -15,7 +19,6 @@
   };
   var titleInput = mainForm.querySelector('#title');
   var priceInput = mainForm.querySelector('#price');
-  var defaultPricePlaceholder = '1000';
   var houseType = mainForm.querySelector('#type');
   var timeinSelect = mainForm.querySelector('#timein');
   var timeoutSelect = mainForm.querySelector('#timeout');
@@ -30,6 +33,22 @@
   var submitBtn = mainForm.querySelector('.ad-form__submit');
   var resetBtn = mainForm.querySelector('.ad-form__reset');
   var succesMessage = document.querySelector('.success');
+  var pinFileChooser = document.querySelector('.ad-form-header__input');
+  var pinPreview = document.querySelector('.ad-form-header__preview img');
+  var photosFileChooser = document.querySelector('.ad-form__input');
+  var photoPreview = document.querySelector('.ad-form__photo');
+  var photoesContainer = document.querySelector('.ad-form__photo-container');
+  var PreviewImageParameters = {
+    HEIGHT: 44,
+    WIDTH: 40
+  };
+  var errorMessage = 'Доступные форматы изображений ' + FILE_TYPES;
+
+  var disableForm = function () {
+    fieldsets.forEach(function (element) {
+      element.disabled = true;
+    });
+  };
 
   var removeSuccesMessage = function () {
     succesMessage.classList.add('hidden');
@@ -51,17 +70,11 @@
   };
 
   var checkValidation = function (input) {
-    if (input.validity.tooShort) {
-      input.style = inputStyle.INVALID;
-    } else if (input.validity.valueMissing) {
-      input.style = inputStyle.INVALID;
-    } else if (priceInput.validity.rangeOverflow) {
-      input.style = inputStyle.INVALID;
-    } else if (priceInput.validity.rangeUnderflow) {
-      input.style = inputStyle.INVALID;
+    if (!input.validity.valid) {
+      input.style = InputStyle.INVALID;
     } else {
       input.setCustomValidity('');
-      input.style = inputStyle.VALID;
+      input.style = InputStyle.VALID;
     }
   };
 
@@ -82,12 +95,13 @@
   };
 
   var resetInputs = function () {
-    priceInput.placeholder = defaultPricePlaceholder;
-
-    for (var i = 0; i < inputs.length; i++) {
-      inputs[i].style = inputStyle.VALID;
-    }
+    priceInput.placeholder = DEFAULT_PRICE_PLACEHOLDER;
+    inputs.forEach(function (element) {
+      element.style = InputStyle.VALID;
+    });
   };
+
+  disableForm();
 
   setMatchRoom();
 
@@ -103,7 +117,7 @@
     priceInput.placeholder = offerTypesPrice[houseType.value];
     priceInput.min = offerTypesPrice[houseType.value];
     if (priceInput.min < priceInput.value || priceInput.max < priceInput.value) {
-      priceInput.style = inputStyle.INVALID;
+      priceInput.style = InputStyle.INVALID;
     }
   });
 
@@ -135,19 +149,78 @@
     mainForm.classList.add('ad-form--disabled');
   });
 
+  var removePhotos = function () {
+    var photos = document.querySelectorAll('.ad-form__photo');
+
+    photos.forEach(function (item) {
+      item.remove();
+    });
+  };
+
+  var getImage = function () {
+    var tagName = document.createElement('img');
+
+    tagName.width = PreviewImageParameters.WIDTH;
+    tagName.height = PreviewImageParameters.HEIGHT;
+    return tagName;
+  };
+
+  var addImg = function (fileChooser, filePreview, createElement) {
+
+    for (var i = 0; i < fileChooser.files.length; i++) {
+      var file = fileChooser.files[i];
+      var fileName = file.name.toLowerCase();
+
+      var matches = FILE_TYPES.some(function (it) {
+        return fileName.endsWith(it);
+      });
+
+      if (matches) {
+        var reader = new FileReader();
+
+        reader.addEventListener('load', function (evt) {
+          reader = evt.target;
+          if (createElement) {
+            var housePhoto = getImage();
+            housePhoto.src = reader.result;
+            var newPhotoPreview = filePreview.cloneNode();
+            photoesContainer.appendChild(newPhotoPreview);
+            newPhotoPreview.appendChild(housePhoto);
+          } else {
+            filePreview.src = reader.result;
+          }
+        });
+        reader.readAsDataURL(file);
+      } else {
+        window.utils.renderError(errorMessage);
+      }
+    }
+  };
+
+  pinFileChooser.addEventListener('change', function () {
+    addImg(pinFileChooser, pinPreview);
+  });
+
+  photosFileChooser.addEventListener('change', function () {
+    removePhotos();
+    addImg(photosFileChooser, photoPreview, true);
+  });
+
   window.form = {
     disable: function () {
       mainForm.reset();
       mainForm.classList.add('ad-form--disabled');
-
-      for (var i = 0; i < fieldsets.length; i++) {
-        fieldsets[i].disabled = true;
-      }
+      pinPreview.src = DEFAULT_IMAGE_SRC;
+      fieldsets.forEach(function (element) {
+        element.disabled = true;
+      });
+      removePhotos();
+      photoesContainer.appendChild(photoPreview);
     },
     activate: function () {
-      for (var i = 0; i < fieldsets.length; i++) {
-        fieldsets[i].disabled = false;
-      }
+      fieldsets.forEach(function (element) {
+        element.disabled = false;
+      });
       mainForm.classList.remove('ad-form--disabled');
     }
   };
